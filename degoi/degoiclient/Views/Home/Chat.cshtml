@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Chat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using degoiclient.Models;
+
+@section head {
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="@Config.Api/signalr/hubs"></script>
+    <script>
+        $.support.cors = true;
+        var connection = $.hubConnection(Config.Api);
+        var ChatHub = connection.createHubProxy('ChatHub');
+        ChatHub.on('duplicate', () => {
+            $(document).empty();
+            alert("Please close!");
+        });
+        ChatHub.on('receiveMessage', (message, type, roomId) => {
+            console.log(`${roomId} receive ${message} of ${type}`);
+        });
+        connection.start().done(() => {
+            console.log('connected to SignalR hub... connection id: ' + ChatHub.connection.id);
+        }).fail((event) => {
+            console.log(event);
+        });
+        function sendMessage(message, type, roomId) {
+            ChatHub.invoke('sendMessage', message, type, roomId);
+        }
+    </script>
+}
+
+<h2>Chat</h2>
+<form action="/degoiapi/api/Upload/Upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*">
+    <input type="text" name="roomId" />
+    <input type="submit">
+</form>
+

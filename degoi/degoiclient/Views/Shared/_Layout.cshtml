@@ -1,0 +1,18 @@
+﻿@using degoiclient.Models
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var Config = {
+            Api: "@Config.Api"
+        };
+    </script>
+    <script src="~/Scripts/degoiapi.js"></script>
+    @RenderSection("head", false)
+    <title>@ViewBag.Title - degoi</title>
+</head>
+<body>
+    @RenderBody()
+</body>
+</html>

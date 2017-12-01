@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "Test1";
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+}
+
+<h2>Test1</h2>
+
+<script type="text/javascript">
+      function ChangeUrl(page, url) {
+          if (typeof (history.pushState) != "undefined") {
+              var obj = { Page: page, Url: url };
+              history.pushState(obj, obj.Page, obj.Url);
+          } else {
+              alert("Browser does not support HTML5.");
+          }
+      }
+      $(function () {
+          $("#button1").click(function () {
+              ChangeUrl('Page1', 'Page1.htm');
+          });
+          $("#button2").click(function () {
+              ChangeUrl('Page2', 'Page2.htm');
+          });
+          $("#button3").click(function () {
+              ChangeUrl('Page3', 'Page3.htm');
+          });
+      });
+</script>
+<input type="button" value="Page1" id="button1" />
+<input type="button" value="Page2" id="button2" />
+<input type="button" value="Page3" id="button3" />

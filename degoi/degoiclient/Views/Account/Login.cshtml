@@ -1,0 +1,95 @@
+﻿@{
+    Layout = "~/Views/Account/_AccountLayout.cshtml";
+    ViewBag.Title = "Login";
+}
+
+@section head {
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/style.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/bootstrap-social.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/font-awesome.css">
+}
+
+<div class="bgimg">
+    <div class="center">
+        <div class="about-page">
+            <h2>Lorem Ipsum Is Simply Dummy Text</h2>
+            <br><br>
+            <p class="introduce"> It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages.</p>
+            <br><br>
+            <button type="button" onclick="openLoginPopup()" class="btn btn-outline-primary btn-lg">Get Started</button>
+        </div>
+    </div>
+</div>
+
+<div class="login-popup center panel panel-primary">
+    <div class="panel-heading">Login</div>
+    <div class="panel-body">
+        <div class="body cf">
+            <form id="externalLogins">
+                <input type="hidden" name="returnUrl" value="@Url.Action("Login")" />
+                <a class="btn btn-block btn-social btn-facebook" onclick="">
+                    <i class="fa fa-facebook"></i>Sign in with Facebook
+                </a>
+                <a class="btn btn-block btn-social btn-google" onclick="">
+                    <i class="fa fa-google"></i>Sign in with Google
+                </a>
+            </form>
+            <p class="or-divider"><span>OR</span></p>
+            <form id="login" method="POST" class="login-form">
+                <input type="hidden" name="grant_type" value="password">
+                <input type="text" name="username" id="username" placeholder="Username or email" />
+                <input type="password" name="password" id="password" placeholder="Password" />
+                <input type="button" value="Login" id="login-form-submit" onclick="login()" />
+            </form>
+        </div>
+        <footer>
+            <p class="left">
+                Not a member? @Html.ActionLink("Join us today!", "Register")
+            </p>
+        </footer>
+    </div>
+</div>
+
+<script>
+    function login() {
+        degoiapi.login(
+            $("#login").serialize(),
+            (response) => {
+                window.location.replace("@Url.Action("Index", "Home")");
+            }
+        );
+    }
+    window.onload = () => {
+        degoiapi.externalLogins(
+            $("#externalLogins").serialize(),
+            (response) => {
+                $("#externalLogins").empty();
+                for (var i = 0; i < response.length; i++) {
+                    $("#externalLogins").append(
+                        $("<a></a>")
+                            .html("<i class=\"fa fa-" + response[i].Name.toLowerCase() + "\"></i>Sign in with " + response[i].Name)
+                            .attr({
+                                href: response[i].Url
+                            })
+                            .addClass("btn btn-block btn-social")
+                            .addClass("btn-" + response[i].Name.toLowerCase())
+                    )
+                }
+            }
+        );
+        if (location.hash) {
+            localStorage.setItem("token", location.hash.split("#access_token=")[1].split("&")[0]);
+            location.hash = "";
+            degoiapi.userInfo(
+                (response) => {
+                    if (response.HasRegistered) window.location.replace("@Url.Action("Index", "Home")");
+                    else degoiapi.registerExternal(
+                        (response) => alert("Registered! Click again")
+                    );
+                }
+            )
+        }
+    }
+</script>

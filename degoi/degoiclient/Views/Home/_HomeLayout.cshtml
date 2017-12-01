@@ -1,0 +1,124 @@
+﻿@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section head {
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Content/bootstrap-theme.min.css">
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/Content/style.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Homepage.css">
+    <script src="~/Scripts/Homepage.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="~/Scripts/ajaxload.js"></script>
+    <script src="~/Scripts/signalr.js"></script>
+    <script>
+        var user;
+        degoiapi.userInfo(
+            (response) => {
+                user = response;
+            },
+            (jqXHR, textStatus, errorThrown) => window.location.replace("@Url.Action("Login", "Account")")
+        );
+        window.onpopstate = () => {
+            ajax.load(document.location.href);
+        }
+    </script>
+}
+
+<!--Header-->
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Logo</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav"></ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Message<span class="badge">5</span>  <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">
+                                <strong>Nguyen Dat</strong>
+                                <br>
+                                <p>Hôm nay trời đẹp ghê, đi chơi hok</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <strong>Thành Pk</strong>
+                                <br>
+                                <p>Alo Tuấn Anh đang làm gì đấy</p>
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">See all in Messenger</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" id="username" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Account manage</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="javascript:logout()">Log out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="chat-sidebar">
+    <div class="sidebar-name">
+        <!-- Pass username and display name to register popup -->
+        <a href="javascript:register_popup('1', 'Name Of User 1');">
+            <img width="30" height="30" src="" />
+            <span>Name Of User 1</span>
+        </a>
+    </div>
+    <div class="sidebar-name">
+        <!-- Pass username and display name to register popup -->
+        <a href="javascript:register_popup('userId02', 'Name Of User 2');">
+            <img width="30" height="30" src="" />
+            <span>Name Of User 2</span>
+        </a>
+    </div>
+    <div class="sidebar-name">
+        <!-- Pass username and display name to register popup -->
+        <a href="javascript:register_popup('userId03', 'Name Of User 3');">
+            <img width="30" height="30" src="" />
+            <span>Name Of User 3</span>
+        </a>
+    </div>
+</div>
+
+<main>
+    @RenderBody()
+</main>
+
+<script>
+    function logout() {
+        degoiapi.logout(
+            (response) => window.location.replace("@Url.Action("Login", "Account")")
+        );
+    }
+    window.onload = () => {
+        $("#username").text(user.Email);
+        ajax.assign();
+    }
+</script>

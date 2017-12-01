@@ -1,0 +1,111 @@
+@font-face {
+font-family: "Helvetica Light";
+src: url("../fonts/HelveticaLt.ttf");
+}
+
+body, html {
+	height: 100%;
+	font-family: "Helvetica Light";
+	font-size: 20px;
+}
+
+.bgimg {
+	background-image: url("../imgs/background2.jpg");
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.center {
+	position: absolute;
+	top: 50%;
+	left:50%;
+	text-align: center;
+}
+
+.about-page {
+	position: absolute;
+	margin: -250px 0px 0px -450px;
+	width: 900px;
+}
+
+.about-page h2 {
+	font-size: 38px;
+	font-weight: 400;
+}
+
+.about-page .introduce {
+	font-size: 18px;
+	font-weight: 400;
+}
+
+/*Login Popup*/
+.login-popup {
+	display: none;
+	margin: -240px 0px 0px -220px;
+	width: 440px;
+}
+
+.or-divider {
+	position: relative;
+	margin: 26px 0px;
+	font-size: 14px;
+	font-weight: 600;
+	width: 100%;
+	height: 0px;
+	border: 1px solid #eeeeee;
+	text-align: center;
+}
+
+.or-divider span {
+	position: absolute;
+	top: -10px;
+	background-color: white;
+}
+
+
+input#username, input#password {
+	outline: none;
+	border: 2px solid #eeeeee;
+	font-size: 15px;
+	font-weight: 400;
+	padding: 0px 14px;
+	width: 100%;
+	height: 36px;
+	margin-bottom: 16px;
+}
+
+.forgot-pw {
+	font-size: 14px;
+	line-height: 32px;
+	color: #666;
+	float:left;
+	padding-bottom: 20px;
+}
+
+#login-form-submit {
+	float: right;
+	outline: 0;
+	width: 40%;
+	height: 32px;
+	background-color: #1e1e1e;
+	color: white;
+	border: 0;
+	font-weight: 400;
+}
+
+.login-popup .body {
+	padding: 16px 36px;
+}
+
+.login-popup footer {
+	float: left;
+	height: 46px;
+	width: 100%;
+	border-top: 1px solid #e1e1e1;
+	color: #a0a0a0;
+	font-size: 16px;
+	line-height: 46px;
+	padding: 0 36px;
+}
