@@ -178,15 +178,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\CallHub.cs" />
     <Compile Include="Hubs\ChatHub.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CallModels\CallOffer.cs" />
-    <Compile Include="Models\CallModels\User.cs" />
-    <Compile Include="Models\CallModels\UserCall.cs" />
-    <Compile Include="Models\ChatModels\Room.cs" />
+    <Compile Include="Models\ChatModels\CallOffer.cs" />
     <Compile Include="Models\ChatModels\User.cs" />
+    <Compile Include="Models\ChatModels\UserCall.cs" />
+    <Compile Include="Models\ChatModels\Room.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />

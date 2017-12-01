@@ -161,11 +161,11 @@
             (response) => window.location.replace("@Url.Action("Login", "Account")")
         );
     }
+    window.onunload = () => {
+        signalr.chatHub.stop();
+    }
     window.onload = () => {
         $("#username").text(user.Email);
         ajax.assign();
-    }
-    window.onunload = () => {
-        signal.chatHub.stop();
     }
 </script>

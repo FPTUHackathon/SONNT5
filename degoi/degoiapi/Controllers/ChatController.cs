@@ -17,16 +17,19 @@ namespace degoiapi.Controllers {
     public class ChatController : ApiController {
         [Route("Room")]
         [HttpPost]
-        public string Room(string sUserIds) {
+        public string Room() {
+            var httpRequest = HttpContext.Current.Request;
+            var sUserIds = httpRequest.Form["sUserIds"];
             string[] userIds = sUserIds.Split(',');
             Array.Sort(userIds);
             string roomId = "";
             foreach (string userId in userIds) roomId += userId;
-            ChatHub.Rooms.Add(new Room() {
-                Name = "Room",
-                UserIds = userIds.ToList(),
-                RoomId = roomId
-            });
+            if (ChatHub.Rooms.Count(e => e.RoomId == roomId) == 0)
+                ChatHub.Rooms.Add(new Room() {
+                    Name = "Room",
+                    UserIds = userIds.ToList(),
+                    RoomId = roomId
+                });
             return roomId;
         }
 

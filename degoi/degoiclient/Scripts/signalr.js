@@ -124,57 +124,50 @@
     $.support.cors = true;
     var connection = $.hubConnection(Config.Api);
     var ChatHub = connection.createHubProxy("ChatHub");
-    var CallHub = connection.createHubProxy("CallHub");
     //-----------------CHAT HUB------------------------
     ChatHub.on("duplicate", () => {
         $(document.body).html("<h1>Only 1 tab allowed</h1>");
     });
-    ChatHub.on("receiveMessage", (message, type, roomId) => {
-        console.log(`${roomId} receive ${message} of ${type}`);
+    ChatHub.on("receiveMessage", (id, message, date, type, roomId) => {
+        addMessage(roomId, id, message, date, type);
     });
     ChatHub.on('updateUsers', (users) => {
         createChatSliderBar(users);
     });
-    connection.start().done(() => {
-        console.log('connected to SignalR hub... connection id: ' + ChatHub.connection.id);
-    }).fail((event) => {
-        console.log(event);
-    });
-    //---------------CALL HUB--------------------------
-    CallHub.on("incomingCall", (callingUser) => {
+    ChatHub.on("incomingCall", (callingUser) => {
         console.log(`incoming call from: ${JSON.stringify(callingUser)}`);
         console.log(`calling user connId: ${callingUser.ConnectionId}`);
         GetMedia((stream) => {
             var videoCall = document.getElementById('video-call');
             videoCall.style.display = 'block';
-            CallHub.invoke('answerCall', true, callingUser.ConnectionId);
+            ChatHub.invoke('answerCall', true, callingUser.ConnectionId);
         })
     });
-    CallHub.on("callAccepted", (acceptingUser) => {
+    ChatHub.on("callAccepted", (acceptingUser) => {
         console.log(`call accepted from: ${JSON.stringify(acceptingUser)}.  Initiating WebRTC call and offering my stream up...`);
         ConnectionManager.initiateOffer(acceptingUser.ConnectionId, ConnectionManager.mediaStream);
         // user in call
     });
-    CallHub.on("callDeclined", (decliningConnectionId, reason) => {
+    ChatHub.on("callDeclined", (decliningConnectionId, reason) => {
         console.log(`call declined from: ${decliningConnectionId}`);
         console.log(reason);
         // user idle
     });
-    CallHub.on("callEnded", (connectionId, reason) => {
+    ChatHub.on("callEnded", (connectionId, reason) => {
         console.log("call with " + connectionId + " has ended: " + reason);
         ConnectionManager.closeConnection(connectionId);
         //user idle
     });
-    CallHub.on('updateUserList', (userList) => {
+    ChatHub.on('updateUserList', (userList) => {
         console.log(userList)
     });
-    CallHub.on("receiveSignal", (callingUser, data) => {
+    ChatHub.on("receiveSignal", (callingUser, data) => {
         ConnectionManager.newSignal(callingUser.ConnectionId, data);
     });
 
     connection.start().done(() => {
-        console.log('connected to SignalR ChatHub... connection id: ' + ChatHub.connection.id);
-        console.log('connected to SignalR CallHub... connection id: ' + CallHub.connection.id);
+        console.log('connected to SignalR ChatHub... connection id: ' + connection.id);
+        user.ConnectionId = connection.id;
     }).fail((e) => {
         console.log(e);
     });
@@ -190,14 +183,14 @@
                     return;
                 }
                 console.log('initializing connection manager');
-                ConnectionManager.signaler = CallHub;
+                ConnectionManager.signaler = ChatHub;
                 ConnectionManager.mediaStream = stream;
                 console.log('playing my local video feed');
                 var videoElement = document.getElementById("my-cam");
                 attachMediaStream(videoElement, ConnectionManager.mediaStream);
-                cb(stream);
+                if (cb) cb(stream);
             }, (e) => {
-                CallHub.invoke('hangUp');
+                ChatHub.invoke('hangUp');
                 console.log(e);
             });
     }
@@ -218,7 +211,7 @@
     return {
         ConnectionManager: ConnectionManager,
         ChatHub: ChatHub,
-        CallHub: CallHub,
+        ChatHub: ChatHub,
         ToggleVideo: ToggleVideo,
         ToggleSound: ToggleSound,
         GetMedia: GetMedia

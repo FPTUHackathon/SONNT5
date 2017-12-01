@@ -100,5 +100,19 @@
             },
             fail
         );
+    },
+    room: (data, done, fail) => {
+        degoiapi.callApi(
+            "POST",
+            Config.Api + "/api/Chat/Room",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            (response) => {
+                if (done) done(response);
+            },
+            fail
+        );
     }
 };
