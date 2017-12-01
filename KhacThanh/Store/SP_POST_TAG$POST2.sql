@@ -1,7 +1,7 @@
 USE [DEGOI]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SP_POST_TAG$POST]    Script Date: 12/1/2017 11:55:29 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_POST_TAG$GET]    Script Date: 12/1/2017 10:54:00 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -10,11 +10,11 @@ GO
 
 
 
-
-CREATE PROCEDURE [dbo].[SP_POST_TAG$POST]
+CREATE PROCEDURE [dbo].[SP_POST_TAG$POST2]
 	@UserId Nvarchar(128),
 	@PostContent Text,
-	@TagId Text
+	@TagId Text,
+	@CrtDate datetime
 AS
 BEGIN
 	DECLARE @NEW_POST_ID AS Nvarchar(20)
@@ -28,8 +28,8 @@ BEGIN
      VALUES
            (@UserId
            ,@PostContent
-           ,GETDATE()
-           ,GETDATE())
+           ,@CrtDate
+           ,@CrtDate)
 	SET @NEW_POST_ID = SCOPE_IDENTITY();
 	
 	INSERT INTO PostTag
@@ -43,12 +43,11 @@ BEGIN
 	 
 	If @@ERROR <> 0 GoTo ErrorHandler
     Set NoCount OFF
-    Return(0)
+    Return(@NEW_POST_ID)
   
 	ErrorHandler:
-    Return(@@ERROR)
+    Return(0)
 END
-
 
 
 GO
