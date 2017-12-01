@@ -13,6 +13,7 @@
     <script src="~/Scripts/Homepage.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
     <script src="~/Scripts/ajaxload.js"></script>
+    <script src="~/Scripts/adapter.js"></script>
     <script src="~/Scripts/signalr.js"></script>
     <script>
         var user;
@@ -82,7 +83,6 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-    <button type="button" onclick="createChatSliderBar()">Add user</button>
 <div id="chat-slidebar" class="chat-sidebar">
     <div class="sidebar-name">
         <!-- Pass username and display name to register popup -->
@@ -108,11 +108,8 @@
     </div>
 </div>
 <div id="video-call" class="video-call">
-    <video id="friend-cam" class="friend-cam" style="background-color:green;">
-    </video>
-    <video id="my-cam" class="my-cam">
-
-    </video>
+    <video id="friend-cam" class="friend-cam" style="background-color:green;" autoplay></video>
+    <video id="my-cam" class="my-cam" autoplay muted></video>
 
     <div id="video-chat-box" class="chat-box">
         <div class="chatbox-messages">
@@ -167,5 +164,8 @@
     window.onload = () => {
         $("#username").text(user.Email);
         ajax.assign();
+    }
+    window.onunload = () => {
+        signal.chatHub.stop();
     }
 </script>

@@ -17,7 +17,7 @@
     <AssemblyName>degoiclient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44309</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -168,12 +168,12 @@
     <Content Include="imgs\logo.png" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\ajaxload.js" />
-    <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\icomoon\fonts\icomoon.eot" />
     <Content Include="Content\icomoon\fonts\icomoon.ttf" />
     <Content Include="Content\icomoon\fonts\icomoon.woff" />
+    <Content Include="fonts\HelveticaLt.ttf" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\degoiapi.js" />
     <Content Include="Scripts\Homepage.js" />

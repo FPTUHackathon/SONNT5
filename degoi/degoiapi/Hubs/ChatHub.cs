@@ -31,7 +31,7 @@ namespace degoiapi.Hubs {
             if (User == null) OnlineUsers.Add(new User() {
                 UserId = UserId,
                 Name = UserName,
-                ConnectionId = Context.ConnectionId,
+                ConnectionId = Context.ConnectionId
             });
             else Clients.Caller.Duplicate();
             return base.OnConnected();

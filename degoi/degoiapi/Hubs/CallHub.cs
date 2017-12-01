@@ -38,10 +38,15 @@ namespace degoiapi {
         public void CallUser(string targetConnectionId) {
             var callingUser = OnlineUsers.SingleOrDefault(u => u.ConnectionId == Context.ConnectionId);
             var targetUser = OnlineUsers.SingleOrDefault(u => u.ConnectionId == targetConnectionId);
+            if (callingUser == null) {
+                return;
+            }
             if (targetUser == null) {
                 Clients.Caller.callDeclined(targetConnectionId, "The user you called has left.");
                 return;
             }
+            if (callingUser.InCall) return;
+            if (targetUser.InCall) return;
             if (GetUserCall(targetUser.ConnectionId) != null) {
                 Clients.Caller.callDeclined(targetConnectionId, $"{targetUser.UserId} is already in a call.");
                 return;
@@ -63,6 +68,8 @@ namespace degoiapi {
                 Clients.Caller.callEnded(targetConnectionId, "The other user in your call has left.");
                 return;
             }
+            if (callingUser.InCall) return;
+            if (targetUser.InCall) return;
             if (acceptCall == false) {
                 Clients.Client(targetConnectionId).callDeclined(callingUser,
                     $"{callingUser.UserId} did not accept your call.");

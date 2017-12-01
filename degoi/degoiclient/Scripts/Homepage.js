@@ -25,18 +25,15 @@ function loadMessage(id) {
 }
 
 
-function createChatSliderBar() {
-    list = [
-        { name: 'User 001', conID: '' },
-        { name: 'User 002', conID: '' },
-        { name: 'User 003', conID: '' }
-    ];
+function createChatSliderBar(list) {
     var chatSlidebar = document.getElementById('chat-slidebar');
+    $("#chat-slidebar").empty();
     var item = "";
     for (var i = 0; i < list.length; i++) {
+        if (list.UserId == user.UserId)
         var item = document.createElement("div");
         item.classList.add('sidebar-name');
-        item.innerHTML = '<a href="javascript:register_popup(' + i + ', ' + list[i].name + ');"> <img width="30" height="30" src="" /> <span>'+list[i].name+'</span></a>';
+        item.innerHTML = '<a href="javascript:register_popup(\'' + list[i].ConnectionId + '\', \'' + list[i].Name + '\');"> <img width="30" height="30" src="" /> <span>' + list[i].Name + '</span></a>';
         chatSlidebar.appendChild(item);
         item = "";
     }
@@ -143,7 +140,7 @@ function register_popup(id, name) {
 
     popupBox.id = id;
 
-    popupBox.innerHTML = '<div class="popup-head"><div class="popup-head-left">' + name + '</div><div class="popup-head-right"><button type="button" onclick="callPeople()" name="button">Call</button><a href="javascript:close_popup(\'' + id + '\');">&#10005;</a></div><div style="clear: both"></div></div><div class="chatbox-messages"></div><div class="input-box"><textarea placeholder="Enter message"></textarea></div>	';
+    popupBox.innerHTML = '<div class="popup-head"><div class="popup-head-left">' + name + '</div><div class="popup-head-right"><button type="button" onclick="callPeople(\'' + id + '\')" name="button">Call</button><a href="javascript:close_popup(\'' + id + '\');">&#10005;</a></div><div style="clear: both"></div></div><div class="chatbox-messages"></div><div class="input-box"><textarea placeholder="Enter message"></textarea></div>	';
 
     // <div class="popup-box chat-popup" id="">
     //   <div class="popup-head">
@@ -184,12 +181,12 @@ function calculate_popups() {
 }
 
 //recalculate when window is loaded and also when window is resized.
-window.addEventListener("resize", calculate_popups);
-window.addEventListener("load", calculate_popups);
 
-function callPeople() {
+function callPeople(id) {
     var videoCall = document.getElementById('video-call');
     videoCall.style.display = 'block';
+    signalr.GetMedia();
+    signalr.CallHub.invoke("callUser", id);
 }
 
 function exitFullScreen() {
