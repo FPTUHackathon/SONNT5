@@ -141,7 +141,7 @@
             var videoCall = document.getElementById('video-call');
             videoCall.style.display = 'block';
             ChatHub.invoke('answerCall', true, callingUser.ConnectionId);
-        })
+        });
     });
     ChatHub.on("callAccepted", (acceptingUser) => {
         console.log(`call accepted from: ${JSON.stringify(acceptingUser)}.  Initiating WebRTC call and offering my stream up...`);
@@ -153,9 +153,12 @@
         console.log(reason);
         // user idle
     });
-    ChatHub.on("callEnded", (connectionId, reason) => {
-        console.log("call with " + connectionId + " has ended: " + reason);
-        ConnectionManager.closeConnection(connectionId);
+    ChatHub.on("callEnded", (callingUser, reason) => {
+        console.log("call with " + callingUser.ConnectionId + " has ended: " + reason);
+        ConnectionManager.closeConnection(callingUser.ConnectionId);
+        var videoCall = document.getElementById('video-call');
+        videoCall.style.display = 'none';
+        ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
         //user idle
     });
     ChatHub.on('updateUserList', (userList) => {

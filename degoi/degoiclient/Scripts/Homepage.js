@@ -1,54 +1,52 @@
 function addMessage(roomId, userr, message, date, type) {
-    var item = document.getElementById(roomId);
+    var item = $(`#${roomId}`)[0];
     if (!item) item = create_popup(roomId, userr.Name, userr.UserId, userr.ConnectionId);
     var chatbox = item.getElementsByClassName('chatbox-messages');
     //DEMO get message from array
     var stringHTML = "<ul>";
-    stringHTML += '<li>'
+    stringHTML += "<li>"
     if (userr.UserId == user.UserId) {
-        stringHTML += '<span class="left">' + message + '</span><div class="clear"></div></li>';
+        stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
     } else {
-        stringHTML += '<span class="right">' + message + '</span><div class="clear"></div></li>';
+        stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
     }
     $(chatbox[0]).append(stringHTML);
 }
 
 
 function createChatSliderBar(list) {
-    var chatSlidebar = document.getElementById('chat-slidebar');
+    var chatSlidebar = document.getElementById("chat-slidebar");
     $("#chat-slidebar").empty();
     var item = "";
     for (var i = 0; i < list.length; i++) {
         if (list[i].UserId == user.UserId) continue;
         var item = document.createElement("div");
-        item.classList.add('sidebar-name');
-        item.innerHTML = '<a href="javascript:register_popup(\'' + list[i].ConnectionId + '\', \'' + list[i].Name + '\', \'' + list[i].UserId + '\');"> <img width="30" height="30" src="" /> <span>' + list[i].Name + '</span></a>';
+        item.classList.add("sidebar-name");
+        item.innerHTML = `<a href="javascript:register_popup('${list[i].ConnectionId}', '${list[i].Name}', '${list[i].UserId}');"> <img width="30" height="30" src="" /> <span>${list[i].Name}</span></a>`;
         chatSlidebar.appendChild(item);
         item = "";
     }
 }
 
 function createAlertHavingCall(id, name) {
-    var havingCall = document.createElement("div");
-    havingCall.id = "having-call";
-    havingCall.innerHTML = '<p>' + name + ' calling you.</p>  <button type="button" onclick="acceptCall()" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall()" class="btn btn-danger">Cancel</button>';
-    var body = document.getElementsByTagName('body');
-    body[0].appendChild(havingCall);
+    var str = `<p>${name} calling you.</p>  <button type="button" onclick="acceptCall()" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall()" class="btn btn-danger">Cancel</button>`;
+    var havingCall = $("<div id='having-call'></div>").html(str);
+    $('body')[0].append(havingCall);
 }
 
 function acceptCall() {
     //TODO
-    var videoCall = document.getElementById('video-call');
+    var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
     // console.log('acceptCall');//
-    var havingCall = document.getElementById('having-call');
+    var havingCall = $("#having-call")[0];
     havingCall.style.display = 'none';
 }
 
 function cancelCall() {
     //TODO
-    var havingCall = document.getElementById('having-call');
-    havingCall.style.display = 'none';
+    var havingCall = $("#having-call");
+    havingCall.style.display = "none";
 }
 // <div id="having-call">
 //   <p>User001 calling you.</p>
@@ -78,11 +76,8 @@ function close_popup(id) {
     for (var iii = 0; iii < popups.length; iii++) {
         if (id == popups[iii]) {
             Array.remove(popups, iii);
-
             document.getElementById(id).style.display = "none";
-
             calculate_popups();
-
             return;
         }
     }
@@ -100,7 +95,6 @@ function display_popups() {
             element.style.display = "block";
         }
     }
-
     //for (var jjj = iii; jjj < popups.length; jjj++) {
     //    var element = document.getElementById(popups[jjj]);
     //    element.style.display = "none";
@@ -112,21 +106,17 @@ function create_popup(roomId, name, userId, connectionId) {
         //already registered. Bring it to front.
         if (roomId == popups[iii]) {
             Array.remove(popups, iii);
-
             popups.unshift(roomId);
-
             calculate_popups();
             return;
         }
     }
 
 
-    var popupBox = document.createElement("div");
+    var popupBox = $("<div></div>")[0];
     popupBox.classList.add("popup-box");
     popupBox.classList.add("chat-popup");
-
     popupBox.id = roomId;
-
     popupBox.innerHTML = '<div class="popup-head"><div class="popup-head-left">' + name + '</div><div class="popup-head-right"><button type="button" onclick="callPeople(\'' + connectionId + '\')" name="button">Call</button><a href="javascript:close_popup(\'' + roomId + '\');">&#10005;</a></div><div style="clear: both"></div></div><div class="chatbox-messages"></div><div class="input-box"><textarea placeholder="Enter message" onkeypress="chatKeyPress(event, \'' + roomId + '\')"></textarea></div>	';
 
     // <div class="popup-box chat-popup" id="">
@@ -143,21 +133,16 @@ function create_popup(roomId, name, userId, connectionId) {
     //     </div>
     //   </div>
 
-    document.getElementsByTagName("body")[0].appendChild(popupBox);
-
+    $("body")[0].append(popupBox);
     popups.unshift(roomId);
-
     calculate_popups();
-
     return popupBox;
 }
 
 //creates markup for a new popup. Adds the id to popups array.
 function register_popup(connectionId, name, userId) {
     var userIds = [userId, user.UserId].sort().join(",");
-
     var form = $("<form></form>").append($(`<input type='text' name='sUserIds' value='${userIds}'/>`));
-
     degoiapi.room($(form).serialize(), (response) => create_popup(response, name, userId, connectionId));
 }
 
@@ -187,48 +172,49 @@ function calculate_popups() {
 //recalculate when window is loaded and also when window is resized.
 
 function callPeople(id) {
-    var videoCall = document.getElementById('video-call');
+    var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
     signalr.GetMedia();
     signalr.ChatHub.invoke("callUser", id);
 }
 
 function exitFullScreen() {
-    var videoChatbox = document.getElementById('video-chat-box');
-    videoChatbox.style.display = 'none';
-    var myCam = document.getElementById('my-cam');
-    myCam.style.display = 'none';
-    var videoControl = document.getElementById('video-control');
-    videoControl.style.display = 'none';
-    var friendCam = document.getElementById('friend-cam');
+    var videoChatbox = $("#video-chat-box")[0];
+    videoChatbox.style.display = "none";
+    var myCam = $("#my-cam")[0];
+    myCam.style.display = "none";
+    var videoControl = $("#video-control")[0];
+    videoControl.style.display = "none";
+    var friendCam = $("#friend-cam")[0];
     friendCam.classList.add('minimize');
-    var btnFullScreen = document.getElementById('full-screen');
-    btnFullScreen.style.display = 'block';
+    var btnFullScreen = $("#full-screen")[0];
+    btnFullScreen.style.display = "block";
 }
 
 function openFullScreen() {
-    var videoChatbox = document.getElementById('video-chat-box');
-    videoChatbox.style.display = 'block';
-    var myCam = document.getElementById('my-cam');
+    var videoChatbox = $("#video-chat-box")[0];
+    videoChatbox.style.display = "block";
+    var myCam = $("#my-cam")[0];
     myCam.style.display = 'block';
-    var videoControl = document.getElementById('video-control');
-    videoControl.style.display = 'block';
-    var friendCam = document.getElementById('friend-cam');
-    friendCam.classList.remove('minimize');
-    var btnFullScreen = document.getElementById('full-screen');
-    btnFullScreen.style.display = 'none';
+    var videoControl = $("#video-control")[0];
+    videoControl.style.display = "block";
+    var friendCam = $("#friend-cam")[0];
+    friendCam.classList.remove("minimize");
+    var btnFullScreen = $("#full-screen")[0];
+    btnFullScreen.style.display = "none";
 }
 
 function endCall() {
-    var videoCall = document.getElementById('video-call');
-    videoCall.style.display = 'none';
-    //TODO: remove stream
+    var videoCall = $("#video-call")[0];
+    videoCall.style.display = "none";
+    signalr.ChatHub.invoke('hangUp');
+    signalr.ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
 }
 
 function disableVideo() {
-    // TODO disable my video
+    signalr.ToggleVideo();
 }
 
 function muted() {
-    //TODO mute sound
+    signalr.ToggleSound();
 }

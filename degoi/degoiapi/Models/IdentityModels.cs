@@ -20,7 +20,7 @@ namespace degoiapi.Models {
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
         public ApplicationDbContext()
-            : base("Server=.;Database=degoi;User Id=sa;Password=123456;", throwIfV1Schema: false) {
+            : base("Server=.;Database=degoi;User Id=sa;Password=sa;", throwIfV1Schema: false) {
         }
 
         public static ApplicationDbContext Create() {

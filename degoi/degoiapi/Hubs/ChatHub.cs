@@ -124,7 +124,7 @@ namespace degoiapi.Hubs {
             var currentCall = GetUserCall(callingUser.ConnectionId);
             if (currentCall != null) {
                 foreach (var user in currentCall.Users.Where(u => u.ConnectionId != callingUser.ConnectionId)) {
-                    Clients.Client(user.ConnectionId).callEnded(callingUser.ConnectionId,
+                    Clients.Client(user.ConnectionId).callEnded(callingUser,
                         $"{callingUser.UserId} has hung up.");
                 }
                 currentCall.Users.RemoveAll(u => u.ConnectionId == callingUser.ConnectionId);
