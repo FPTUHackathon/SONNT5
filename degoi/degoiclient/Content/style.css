@@ -1,8 +1,3 @@
-@font-face {
-font-family: "Helvetica Light";
-src: url("../fonts/HelveticaLt.ttf");
-}
-
 body, html {
 	height: 100%;
 	font-family: "Helvetica Light";
@@ -91,8 +86,9 @@ input#username, input#password {
 	height: 32px;
 	background-color: #1e1e1e;
 	color: white;
-	border: 0;
+	border: 0px;
 	font-weight: 400;
+    margin-bottom: 10px;
 }
 
 .login-popup .body {
