@@ -40,9 +40,9 @@ namespace degoiapi.Hubs {
         }
 
         public override Task OnDisconnected(bool stopCalled) {
+            HangUp();
             var UserId = Context.User.Identity.GetUserId();
-            var UserName = Context.User.Identity.GetUserName();
-            var User = OnlineUsers.Remove(OnlineUsers.SingleOrDefault(u => u.UserId == UserId && u.ConnectionId == Context.ConnectionId));
+            OnlineUsers.Remove(OnlineUsers.SingleOrDefault(u => u.UserId == UserId && u.ConnectionId == Context.ConnectionId));
             return base.OnDisconnected(stopCalled);
         }
 
@@ -64,13 +64,13 @@ namespace degoiapi.Hubs {
                 return;
             }
             if (targetUser == null) {
-                Clients.Caller.callDeclined(targetConnectionId, "The user you called has left.");
+                Clients.Caller.callDeclined(targetUser, "The user you called has left.");
                 return;
             }
             if (callingUser.InCall) return;
             if (targetUser.InCall) return;
             if (GetUserCall(targetUser.ConnectionId) != null) {
-                Clients.Caller.callDeclined(targetConnectionId, $"{targetUser.UserId} is already in a call.");
+                Clients.Caller.callDeclined(targetUser, $"{targetUser.UserId} is already in a call.");
                 return;
             }
             Clients.Client(targetConnectionId).incomingCall(callingUser);

@@ -34,10 +34,6 @@
         };
         connection.onremovestream = (event) => {
             console.log("WebRTC: removing stream");
-            //----
-            console.log("removing remote stream from partner window");
-            var otherVideo = document.getElementById("friend-cam");
-            otherVideo.src = "";
         };
         ConnectionManager.connections[partnerClientId] = connection;
         return connection;
@@ -103,8 +99,8 @@
     };
     //------
     ConnectionManager.initiateOffer = (partnerClientId, stream) => {
-        if (stream == null || stream == {}) {
-            console.log('stream is null');
+        if (typeof stream === "undefined" || stream == null || $.isEmptyObject(stream)) {
+            console.log('stream is null[2]');
             return;
         }
         var connection = ConnectionManager.getConnection(partnerClientId);
@@ -141,15 +137,19 @@
             var videoCall = document.getElementById('video-call');
             videoCall.style.display = 'block';
             ChatHub.invoke('answerCall', true, callingUser.ConnectionId);
+            $("#endCallBtn").on('click', () => endCall(callingUser.ConnectionId));
         });
     });
     ChatHub.on("callAccepted", (acceptingUser) => {
         console.log(`call accepted from: ${JSON.stringify(acceptingUser)}.  Initiating WebRTC call and offering my stream up...`);
-        ConnectionManager.initiateOffer(acceptingUser.ConnectionId, ConnectionManager.mediaStream);
+        GetMedia((stream) => {
+            ConnectionManager.mediaStream = stream;
+            ConnectionManager.initiateOffer(acceptingUser.ConnectionId, ConnectionManager.mediaStream);
+        });
         // user in call
     });
-    ChatHub.on("callDeclined", (decliningConnectionId, reason) => {
-        console.log(`call declined from: ${decliningConnectionId}`);
+    ChatHub.on("callDeclined", (decliningUser, reason) => {
+        console.log(`call declined from: ${decliningUser.ConnectionId}`);
         console.log(reason);
         // user idle
     });
@@ -159,6 +159,7 @@
         var videoCall = document.getElementById('video-call');
         videoCall.style.display = 'none';
         ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
+        ConnectionManager.mediaStream = {};
         //user idle
     });
     ChatHub.on('updateUserList', (userList) => {
@@ -181,8 +182,8 @@
             audio: true
         },
             (stream) => {
-                if (stream == null || stream == {}) {
-                    console.log('stream is null');
+                if (typeof stream === "undefined" || stream == null || $.isEmptyObject(stream)) {
+                    console.log('stream is null[1]');
                     return;
                 }
                 console.log('initializing connection manager');

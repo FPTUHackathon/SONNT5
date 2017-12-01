@@ -172,8 +172,10 @@ function calculate_popups() {
 //recalculate when window is loaded and also when window is resized.
 
 function callPeople(id) {
+    if (signalr.ConnectionManager.connections[id] != null) return;
     var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
+    $("#endCallBtn").on('click', () => endCall(id));
     signalr.GetMedia();
     signalr.ChatHub.invoke("callUser", id);
 }
@@ -204,11 +206,13 @@ function openFullScreen() {
     btnFullScreen.style.display = "none";
 }
 
-function endCall() {
+function endCall(id) {
     var videoCall = $("#video-call")[0];
     videoCall.style.display = "none";
     signalr.ChatHub.invoke('hangUp');
-    signalr.ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
+    signalr.ConnectionManager.closeConnection(id);
+    var videoCall = document.getElementById('video-call');
+    videoCall.style.display = 'none';
 }
 
 function disableVideo() {
