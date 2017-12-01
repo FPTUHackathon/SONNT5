@@ -43,13 +43,16 @@ BEGIN
 	 
 	If @@ERROR <> 0 GoTo ErrorHandler
     Set NoCount OFF
-    Return(@NEW_POST_ID)
-  
+	BEGIN
+		SELECT @NEW_POST_ID;
+	    Return(@NEW_POST_ID)
+	END
 	ErrorHandler:
-    Return(0)
+    BEGIN
+		SELECT '-1';
+		Return(0)
+	END
 END
 
-
-GO
 
 

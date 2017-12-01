@@ -1,7 +1,7 @@
 USE [DEGOI]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SP_POST_TAG$POST]    Script Date: 12/1/2017 11:55:29 PM ******/
+/****** Object:  StoredProcedure [dbo].[SP_POST_TAG$POST]    Script Date: 12/2/2017 12:47:19 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -43,10 +43,15 @@ BEGIN
 	 
 	If @@ERROR <> 0 GoTo ErrorHandler
     Set NoCount OFF
-    Return(0)
-  
+	BEGIN
+		SELECT @NEW_POST_ID AS POST;
+		Return(@NEW_POST_ID)
+	END
 	ErrorHandler:
-    Return(@@ERROR)
+    BEGIN
+		SELECT '-1';
+		Return(0)
+	END
 END
 
 
