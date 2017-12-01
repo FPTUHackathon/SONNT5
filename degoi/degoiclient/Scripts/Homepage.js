@@ -24,6 +24,24 @@ function loadMessage(id) {
     chatbox[0].innerHTML = stringHTML;
 }
 
+
+function createChatSliderBar() {
+    list = [
+        { name: 'User 001', conID: '' },
+        { name: 'User 002', conID: '' },
+        { name: 'User 003', conID: '' }
+    ];
+    var chatSlidebar = document.getElementById('chat-slidebar');
+    var item = "";
+    for (var i = 0; i < list.length; i++) {
+        var item = document.createElement("div");
+        item.classList.add('sidebar-name');
+        item.innerHTML = '<a href="javascript:register_popup(' + i + ', ' + list[i].name + ');"> <img width="30" height="30" src="" /> <span>'+list[i].name+'</span></a>';
+        chatSlidebar.appendChild(item);
+        item = "";
+    }
+}
+
 function createAlertHavingCall(id, name) {
     var havingCall = document.createElement("div");
     havingCall.id = "having-call";
@@ -148,8 +166,6 @@ function register_popup(id, name) {
     calculate_popups();
     loadMessage(id);
 }
-
-
 
 //calculate the total number of popups suitable and then populate the toatal_popups variable.
 function calculate_popups() {

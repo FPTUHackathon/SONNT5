@@ -82,13 +82,14 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-
-<div class="chat-sidebar">
+    <button type="button" onclick="createChatSliderBar()">Add user</button>
+<div id="chat-slidebar" class="chat-sidebar">
     <div class="sidebar-name">
         <!-- Pass username and display name to register popup -->
         <a href="javascript:register_popup('1', 'Name Of User 1');">
             <img width="30" height="30" src="" />
             <span>Name Of User 1</span>
+            <span style="text-align: right; background: rgb(66, 183, 42); border-radius: 50%; display: inline-block; height: 6px; margin-left: 4px; width: 6px;"></span>
         </a>
     </div>
     <div class="sidebar-name">
@@ -109,7 +110,7 @@
 <div id="video-call" class="video-call">
     <video id="friend-cam" class="friend-cam" style="background-color:green;">
     </video>
-    <video id="my-cam" class="my-cam" autoplay poster="posterimage.jpg">
+    <video id="my-cam" class="my-cam">
 
     </video>
 
