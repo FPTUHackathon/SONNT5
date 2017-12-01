@@ -209,8 +209,10 @@ function openFullScreen() {
 function endCall(id) {
     var videoCall = $("#video-call")[0];
     videoCall.style.display = "none";
-    signalr.ChatHub.invoke('hangUp');
+    signalr.ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
+    signalr.ConnectionManager.mediaStream = {};
     signalr.ConnectionManager.closeConnection(id);
+    signalr.ChatHub.invoke('hangUp');
     var videoCall = document.getElementById('video-call');
     videoCall.style.display = 'none';
 }

@@ -155,11 +155,11 @@
     });
     ChatHub.on("callEnded", (callingUser, reason) => {
         console.log("call with " + callingUser.ConnectionId + " has ended: " + reason);
+        ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
+        ConnectionManager.mediaStream = {};
         ConnectionManager.closeConnection(callingUser.ConnectionId);
         var videoCall = document.getElementById('video-call');
         videoCall.style.display = 'none';
-        ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
-        ConnectionManager.mediaStream = {};
         //user idle
     });
     ChatHub.on('updateUserList', (userList) => {
