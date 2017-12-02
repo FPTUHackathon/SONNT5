@@ -48,11 +48,6 @@ function cancelCall() {
     var havingCall = $("#having-call");
     havingCall.style.display = "none";
 }
-// <div id="having-call">
-//   <p>User001 calling you.</p>
-//   <button type="button" class="btn btn-primary">Accept</button>
-//   <button type="button" class="btn btn-danger">Cancel</button>
-// </div>
 
 function sendImage(e) {
 
@@ -117,18 +112,12 @@ function create_popup(roomId, name, userId, connectionId) {
     popupBox.classList.add("popup-box");
     popupBox.classList.add("chat-popup");
     popupBox.id = roomId;
-    //popupBox.innerHTML = '<div class="popup-head"><div class="popup-head-left">' + name +
-    //    '</div><div class="popup-head-right"><button type="button" onclick="callPeople(\'' + connectionId +
-    //    '\')" name="button">Call</button><a href="javascript:close_popup(\'' + roomId +
-    //    '\');">&#10005;</a></div><div style="clear: both"></div></div><div class="chatbox-messages">' +
-    //    '</div><div class="input-box"><textarea placeholder="Enter message" onkeypress="chatKeyPress(event, \'' + roomId +
-    //    '\')"></textarea></div>	';
 
     popupBox.innerHTML = '<div class="popup-head">' +
         '<div class="popup-head-left" >' + name +
         '</div>' +
         '<div class="popup-head-right">' +
-        '<a class="btn-callvideo" onclick="callPeople(\'' + connectionId + '\')" href="#"></a>' +
+        '<a class="btn-callvideo" onclick="callPeople(\'' + roomId + '\',\'' + connectionId + '\')" href="#"></a>' +
         '<a class="btn-closepopup" href="javascript:close_popup(\'' + roomId + '\');"></a>' +
         '</div>' +
         '<div style="clear: both">' +
@@ -142,19 +131,6 @@ function create_popup(roomId, name, userId, connectionId) {
         '<a class="btn-addimage" href="#"></a> &nbsp' +
         '<a class="btn-addfile" href="#"></a>' +
         '</div>';
-    // <div class="popup-box chat-popup" id="">
-    //   <div class="popup-head">
-    //     <div class="popup-head-left">Name of user</div>
-    //     <div class="popup-head-right">
-    //       <button type="button" name="button">Call</button>
-    //       <a href="javascript:close_popup(\''+ id +'\');">&#10005;</a>
-    //     </div>
-    //     <div style="clear: both"></div></div>
-    //     <div class="chatbox-messages"></div>
-    //     <div class="input-box">
-    //       <textarea placeholder="Enter message"></textarea>
-    //     </div>
-    //   </div>
 
     $("body")[0].append(popupBox);
     popups.unshift(roomId);
@@ -194,10 +170,24 @@ function calculate_popups() {
 
 //recalculate when window is loaded and also when window is resized.
 
-function callPeople(id) {
+function callPeople(roomId,id) {
     if (signalr.ConnectionManager.connections[id] != null) return;
-    var videoCall = $("#video-call")[0];
-    videoCall.style.display = 'block';
+
+    $(`#${roomId}`).addClass("open-videocall");
+    var boxChat = $(`#${roomId}`)[0];
+    setTimeout(function () {
+        var videoCall = $("#video-call")[0];
+        videoCall.style.display = 'block';
+        $(`#${roomId}`).removeClass("open-videocall");
+    }, 500);
+
+    var HEIGHT_NAVIGATION = 52;
+    var HEIGHT_MESSAGE_INPUT = 59;
+    var videoChatboxHeight = $(window).height() - HEIGHT_MESSAGE_INPUT - HEIGHT_NAVIGATION;
+    $("#video-chatbox-message").css("height", videoChatboxHeight);
+
+    //var videoCall = $("#video-call")[0];
+    //videoCall.style.display = 'block';
     $("#endCallBtn")[0].onclick = () => endCall(id);
     signalr.GetMedia();
     signalr.ChatHub.invoke("callUser", id);
