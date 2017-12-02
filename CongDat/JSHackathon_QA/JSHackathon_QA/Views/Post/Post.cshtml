@@ -28,7 +28,7 @@
                     "<button type='button' class='btn' onclick='sendNewReply("+cmt_id+")'><i class='fa fa-reply'></i> Reply</button>";       
         var end_comment = "<br><hr>";
 
-        $("#comment-container").append(comment_base + like_button +div_reply + reply_input_box + end_comment);
+        $("#comment-container").append(comment_base + like_button+like_status +div_reply + reply_input_box + end_comment);
     }
     function addReply(cmt_id, author, crt_date, content) {
         //TODO: Thêm 1 thẻ chứa nội dung của 1 reply vào div của comment có id = cmt_id
@@ -42,7 +42,9 @@
         var CmtContent = $("#cmtContentCrtBox").val();
         $.get('http://localhost:51922/api/Comment/Get?post_id='+post_id+'&CmtContent='+CmtContent+'&user_id='+userID,
             function (data) {
-                location.reload();
+                var new_comment = JSON.parse(data);
+                addComment(new_comment, userID, Date.now(), CmtContent, 0, 0);
+                $("#cmtContentCrtBox").val("");
             });
     }
     function sendNewReply(cmt_id) {
@@ -51,14 +53,16 @@
         var replyContent = $("#ReplyCrtBox" + cmt_id).val();
         $.get('http://localhost:51922/api/Reply/Post?cmt_id=' + cmt_id + '&ReplyContent=' + replyContent + '&user_id=' + userID,
             function (data) {
-                location.reload();
+                var new_reply = JSON.parse(data);
+                addReply(cmt_id, userID, Date.now(), replyContent);
+                $("#ReplyCrtBox" + cmt_id).val("");
             });
     }
     function sendLike(cmt_id) {
         //Lay userID!!!!!!!!!!!!!!
         var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
         var like_count = parseInt($("#likecount" + cmt_id).text());
-        var like_status = $("#likestatusof" + cmt_id).val();
+        var like_status = parseInt($("#likestatusof" + cmt_id).val());
         console.log("status"+like_status);
         if (like_status == 0)
             Like(cmt_id, like_count + 1);

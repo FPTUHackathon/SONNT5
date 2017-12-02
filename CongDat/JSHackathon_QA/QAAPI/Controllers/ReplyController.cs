@@ -9,10 +9,10 @@ namespace QAAPI.Controllers
 {
     public class ReplyController : ApiController
     {
-        public bool Get (int cmt_id,string ReplyContent, string user_id){
+        public Int32 Get (int cmt_id,string ReplyContent, string user_id){
             //TODO: add Reply
-            new ReplyContext().addReply(user_id, cmt_id, ReplyContent);
-            return true;
+            int newReplyID = new ReplyContext().addReply(user_id, cmt_id, ReplyContent);
+            return newReplyID;
         }
     }
 }
