@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSHackathon_QA", "JSHackathon_QA\JSHackathon_QA.csproj", "{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QAAPI", "QAAPI\QAAPI.csproj", "{418940ED-7014-42D8-BF96-E22267E5F979}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Release|Any CPU.Build.0 = Release|Any CPU
+		{418940ED-7014-42D8-BF96-E22267E5F979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{418940ED-7014-42D8-BF96-E22267E5F979}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{418940ED-7014-42D8-BF96-E22267E5F979}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{418940ED-7014-42D8-BF96-E22267E5F979}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
