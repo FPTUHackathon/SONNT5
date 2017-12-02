@@ -14,6 +14,7 @@
     <script src="~/Scripts/ajaxload.js"></script>
     <script src="~/Scripts/adapter.js"></script>
     <script src="~/Scripts/signalr.js"></script>
+<script src="~/Scripts/CreateGroup.js"></script>
     <script>
         var user;
         var loaded = false;
@@ -138,28 +139,55 @@
     <button type="button" id="full-screen" onclick="openFullScreen()" name="button"><i class="btn-fullscreen"></i></button>
 </div>
 
+<input type="text" name=""/>
+@*---- CREATE GROUP CALL PANEL----*@
+<button type="button" style="margin-top: 100px" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+<div id="create-group-call">
+    <div class="modal" id="myModal" role="dialog">
+        <div class="modal-dialog">
 
-@*<div class="popup-box chat-popup" id="e54d1506-00b0-4a06-84ef-031f52764a14" style="right: 220px; display: block;">
-    <div class="popup-head" onclick="console.log('anhnttse04296@fpt.edu.vn');">
-        <div class="popup-head-left" >
-            anhnttse04296@fpt.edu.vn
-        </div>
-        <div class="popup-head-right">
-            <a class="btn-callvideo" onclick="callPeople('e54d1506-00b0-4a06-84ef-031f52764a14')" href="#"></a>
-            <a class="btn-closepopup" href="javascript:close_popup('e54d1506-00b0-4a06-84ef-031f52764a14');"></a>
-        </div>
-        <div style="clear: both">
-        </div>
-    </div>
-    <div class="chatbox-messages">
-    </div>
-    <div class="input-box">
-        <textarea placeholder="Enter message"></textarea>
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Create Group</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" placeholder="Name of group" class="form-control" name="name" value="" />
+                    <br />
+                    @*-------Search form------*@
+                    <form id="search-form" action="/" method="post">
+                        <table>
+                            <tr>
+                                <td><input type="text" name="searchquery" class="form-control" id="create-group-search-input" placeholder="Search for people to add" /> </td>
+                                <td> <center> Selected</center></td>
+                            </tr>
 
-        <a class="btn-addimage" href="#"></a>
-        <a class="btn-addfile" href="#"></a>
+                            <tr>
+                                <td>
+                                    <div id="create-group-search-result-container" class="list-group">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="create-group-selected-user-container" class="list-group">
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="create-group-btn-create" type="button" class="btn btn-default" data-dismiss="modal">Create</button> &nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
     </div>
-</div>*@
+</div>
+
+@*------ CREATE GROUP CALL PANEL------*@
 
 @* TEST scroll bar
     <div style="width: 100px;"> AAAAAA<br/>AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
@@ -189,3 +217,4 @@
         ajax.assign();
     }
 </script>
+<script src="~/Scripts/CreateGroup.js"></script>
