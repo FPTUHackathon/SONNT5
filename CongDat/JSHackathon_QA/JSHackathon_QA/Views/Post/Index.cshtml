@@ -1,0 +1,54 @@
+﻿@model List<JSHackathon_QA.Models.Post>
+@{
+    ViewBag.Title = "Index";
+
+}
+<script>
+    function addQA(id, tille, content, author, crt_date) {
+        var userID= "user1";//lay user
+        var newDiv = "<a href='./Post?Post_id=" + id + "'>" +
+                        "<div class='col-md-12' id='" + id + "'>" +
+                            "<h3>" + tille + ". By: " + author + "</h3>" +
+                            "<p>" + content + "</p>" +
+                        "<div>" +
+                        "<span class='badge'>Posted " + crt_date + "</span>" +
+                        "<div class='pull-right' id ='tag_div_of_" + id + "'></div>" +
+                    "</a><hr>";
+        $("#container").append(newDiv);
+    }
+    function addTags(post_id, tag_content,type_label) {
+        var label = "";
+        if (type_label % 4 == 0)
+            label = "label-warning"
+        if (type_label % 4 == 1)
+            label = "label-primary"
+        if (type_label % 4 == 2)
+            label = "label-success"
+        if (type_label % 4 == 3)
+            label = "label-default"
+        var tag_id = "#tag_div_of_"+post_id;
+        var content = "<span class='label " + label + "'>" + tag_content + "</span>";
+        $(tag_id).append(content);
+    }
+</script>
+
+<h1>List of QA:</h1>
+<br/>
+<hr/>
+
+<div class="container" id="container">
+</div>
+
+@foreach(JSHackathon_QA.Models.Post question_answer in Model)
+{
+    <script>
+        addQA('@question_answer.id', '@question_answer.title', '@question_answer.content', '@question_answer.author', '@question_answer.crt_date');
+    </script>
+    for (int i = 0; i < question_answer.tags.Count; i++)
+    {
+        <script>
+            addTags('@question_answer.id', '@question_answer.tags[i].content', '@i');
+        </script>
+    }
+}
+

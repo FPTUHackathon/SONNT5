@@ -15,6 +15,7 @@ C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSH
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\JSHackathon_QA.pdb
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\Newtonsoft.Json.dll
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Helpers.dll
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Mvc.dll
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Razor.dll
@@ -22,6 +23,7 @@ C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSH
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Webpages.dll
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Webpages.Razor.dll
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\Newtonsoft.Json.xml
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Razor.xml
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Webpages.xml
 C:\Users\DatGatto\Desktop\SE04714_NguyenCongDat_SE1108_PRN292\JSHackathon_QA\JSHackathon_QA\bin\System.Web.Webpages.Deployment.xml

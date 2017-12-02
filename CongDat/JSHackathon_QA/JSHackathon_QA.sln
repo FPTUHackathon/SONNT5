@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSHackathon_QA", "JSHackathon_QA\JSHackathon_QA.csproj", "{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSHackathon_QA", "JSHackathon_QA\JSHackathon_QA.csproj", "{AAE0B636-9DD7-4B95-98D0-5217390FB973}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QAAPI", "QAAPI\QAAPI.csproj", "{418940ED-7014-42D8-BF96-E22267E5F979}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QAAPI", "QAAPI\QAAPI.csproj", "{F5DA1611-C8EC-4640-BD2F-3122E28E26F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3ECD5A8-8ACC-40D5-952B-F14C223C9821}.Release|Any CPU.Build.0 = Release|Any CPU
-		{418940ED-7014-42D8-BF96-E22267E5F979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{418940ED-7014-42D8-BF96-E22267E5F979}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{418940ED-7014-42D8-BF96-E22267E5F979}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{418940ED-7014-42D8-BF96-E22267E5F979}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE0B636-9DD7-4B95-98D0-5217390FB973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE0B636-9DD7-4B95-98D0-5217390FB973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE0B636-9DD7-4B95-98D0-5217390FB973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE0B636-9DD7-4B95-98D0-5217390FB973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5DA1611-C8EC-4640-BD2F-3122E28E26F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5DA1611-C8EC-4640-BD2F-3122E28E26F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5DA1611-C8EC-4640-BD2F-3122E28E26F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5DA1611-C8EC-4640-BD2F-3122E28E26F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

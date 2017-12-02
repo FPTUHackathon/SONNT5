@@ -1,0 +1,121 @@
+﻿@using JSHackathon_QA.Models
+@model List<JSHackathon_QA.Models.Comment>
+@{
+    ViewBag.Title = "Post";
+}
+<style>
+    .form-control-inline {
+        min-width: 0;
+        max-width: 800px;
+        width: 100%;
+        display: inline;
+    }
+</style>
+<script>
+    function addComment(cmt_id, author, crt_date, content,like_count,like_status) {
+        //TODO: Thêm 1 thẻ chứa nội dung của 1 comment vào div Comment
+        var comment_base = "<h4><i class='fa fa-comment'></i><b>" + author + "</b> says: " +
+                      "<small>" + crt_date + "</small>" +
+                      "</h4><p>" + content + "</p>";
+        var like_button = "<a  class='btn btn-default' onclick='sendLike("+cmt_id+");'><span class='glyphicon glyphicon-hand-up'></span> " + like_count + "</a>";
+        var div_reply = "<div id='reply_of_" + cmt_id + "'></div>";
+        var reply_input_box = "" +
+                   "<input class='form-control col-lg-8' type='text' id = 'cmt_reply_create_box_"+cmt_id+"'></input>" +
+                    "<button type='button' class='btn' onclick='sendNewReply("+cmt_id+")'><i class='fa fa-reply'></i> Reply</button>";
+
+        var end_comment = "<br><hr>";
+
+        $("#comment-container").append(comment_base + like_button +div_reply + reply_input_box + end_comment);
+    }
+    function addReply(cmt_id, author, crt_date, content) {
+        //TODO: Thêm 1 thẻ chứa nội dung của 1 reply vào div của comment có id = cmt_id
+        var reply = "<div class='well'><p><b>" + author + "</b> <small>" + crt_date + "</small>" + " says: " + content + "</p></div>";
+        var div_id = "#reply_of_" + cmt_id;
+        $(div_id).append(reply);
+    }
+    function sendNewComment(post_id) {
+        //Lay userID!!!!!!!!!!!!
+        var userID = "user1";
+        var CmtContent = $("#cmt_content").val();
+        $.get('http://localhost:51922/api/Comment/Post?post_id='+post_id+'&CmtContent='+CmtContent+'&user_id='+userID,
+            function (data) {
+                //if true -> reload
+            });
+    }
+    function sendNewReply(cmt_id) {
+        //Lay userID!!!!!!!!!!!!!!
+        var userID = "user1";
+        var CmtContent = $("#cmt_reply_create_box_"+cmt_id).val();
+    }
+    function sendLike(cmt_id) {
+        //Lay userID!!!!!!!!!!!!!!
+        var userID = "user1";
+        window.location.replace("google.com");
+    }
+</script>
+<!--Link original template: https://bootsnipp.com/fullscreen/kMmOW -->
+<!--Question&Answer Content:-->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- the actual blog post: title/author/date/content -->
+            <h1>@( ((Post)ViewData["qa"]).title)</h1>
+            <p class="lead">
+                <i class="fa fa-user"></i> by <b><a href="">@( ((Post)ViewData["qa"]).author)</a></b>
+            </p>
+            <hr>
+            <p><i class="fa fa-calendar"></i> Posted on @( ((Post)ViewData["qa"]).crt_date)</p>
+            <p><i class="fa fa-tags"></i> Tags: <a href=""><span class="badge badge-info">Tag1</span></a> <a href=""><span class="badge badge-info">Tag2</span></a> <a href=""><span class="badge badge-info">Tag3</span></a> <a href=""><span class="badge badge-info">Tag4</span></a></p>
+
+            <hr>
+            <img src="http://placehold.it/900x300" class="img-responsive">
+            <hr>
+            <p>@( ((Post)ViewData["qa"]).content)</p>
+            <br>
+            <p></p><h4>I like the post? Like this!</h4><p></p>
+            <iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="https://platform.twitter.com/widgets/tweet_button.5069e7f3e4e64c1f4fb5d33d0b653ff6.en.html#dnt=false&amp;id=twitter-widget-1&amp;lang=en&amp;original_referer=https%3A%2F%2Fs.bootsnipp.com%2Fiframe%2FkMmOW&amp;size=m&amp;text=Complete%20blog%20layout%20-%20Bootsnipp.com&amp;time=1511802392343&amp;type=share&amp;url=https%3A%2F%2Fs.bootsnipp.com%2Fiframe%2FkMmOW" style="position: static; visibility: visible; width: 60px; height: 20px;"></iframe>
+            <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + '://platform.twitter.com/widgets.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'twitter-wjs');</script>
+
+            <div id="___plusone_0" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 38px; height: 24px;"><iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 38px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 24px;" tabindex="0" vspace="0" width="100%" id="I0_1511802392230" name="I0_1511802392230" src="https://apis.google.com/u/0/se/0/_/+1/fastbutton?usegapi=1&amp;annotation=inline&amp;width=300&amp;origin=https%3A%2F%2Fs.bootsnipp.com&amp;url=https%3A%2F%2Fs.bootsnipp.com%2Fiframe%2FkMmOW&amp;gsrc=3p&amp;ic=1&amp;jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.en_GB.R4vvmD-bxFg.O%2Fm%3D__features__%2Fam%3DAQ%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCNqw3woMCdGPJ1k0Sr5vKTnVpzXbw#_methods=onPlusOne%2C_ready%2C_close%2C_open%2C_resizeMe%2C_renderstart%2Concircled%2Cdrefresh%2Cerefresh%2Conload&amp;id=I0_1511802392230&amp;_gfid=I0_1511802392230&amp;parent=https%3A%2F%2Fs.bootsnipp.com&amp;pfname=&amp;rpctoken=84727591" data-gapiattached="true" title="G+"></iframe></div>
+            <script type="text/javascript">
+                (function () {
+                    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                    po.src = 'https://apis.google.com/js/platform.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                })();
+            </script>
+            <br>
+            <hr>
+            <!-- the comments -->
+            <div id="comment-container" class="well">
+                <h3>Comments </h3>
+                <hr>
+            </div>
+            @foreach (JSHackathon_QA.Models.Comment comment in Model)
+            {
+                <script> addComment('@comment.id', '@comment.author', '@comment.crt_date', '@comment.content','@comment.like_count','@comment.likeStatusOfCurrentUser');</script>
+                foreach (JSHackathon_QA.Models.Reply reply in comment.replies)
+                {
+                    <script> addReply('@comment.id', '@reply.author', '@reply.crt_date', '@reply.content');</script>
+                }
+            }
+
+            <!-- the comment box -->
+            <div class="well">
+                <h4>Leave a Comment:</h4>
+                
+                <div class="form-group form-group-lg">
+                    <div class="col-sm-12">
+                        <textarea class="form-control form-control-inline" rows="3" id="cmt_content"></textarea>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="sendNewComment(@(((Post)ViewData["qa"]).id));"><i class="fa fa-reply"></i> Submit</button>
+                
+            </div>
+            <script src="https://apis.google.com/js/plusone.js" gapi_processed="true">
+            </script>
+            <hr>
+
+        </div>
+    </div>
+</div>

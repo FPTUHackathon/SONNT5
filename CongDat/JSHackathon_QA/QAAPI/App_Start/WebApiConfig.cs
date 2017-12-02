@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace QAAPI
+namespace JSHackathon_QA
 {
     public static class WebApiConfig
     {

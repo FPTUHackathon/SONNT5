@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 
-namespace QAAPI
+namespace JSHackathon_QA
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
