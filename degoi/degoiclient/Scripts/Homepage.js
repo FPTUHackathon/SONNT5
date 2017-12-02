@@ -8,18 +8,18 @@ function addMessage(roomId, userr, message, date, type) {
         case 2: {
             stringHTML += "<li>"
             if (userr.UserId == user.UserId) {
-                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></li>`;
+                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></li>`;
             } else {
-                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></div></li>`;
             }
             break;
-        }
+        }   
         default: {
             stringHTML += "<li>"
             if (userr.UserId == user.UserId) {
-                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
-            } else {
                 stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
+            } else {
+                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
             }
             break;
         }
@@ -43,30 +43,39 @@ function createChatSliderBar(list) {
     }
 }
 
-function createAlertHavingCall(id, name) {
-    var str = `<p>${name} calling you.</p>  <button type="button" onclick="acceptCall()" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall()" class="btn btn-danger">Cancel</button>`;
+function createAlertHavingCall(userdata) {
+    console.log("asdasdasd");
+    var str = `<p>${userdata.Name} calling you.</p>  <button type="button" onclick="acceptCall('${userdata.ConnectionId}')" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall('${userdata.ConnectionId}')" class="btn btn-danger">Cancel</button>`;
     var havingCall = $("<div id='having-call'></div>").html(str);
-    $('body')[0].append(havingCall);
+    $('body').append(havingCall);
 }
 
-function acceptCall() {
-    //TODO
+function acceptCall(connectionId) {
+    $("#having-call").remove();
     var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
-    // console.log('acceptCall');//
-    var havingCall = $("#having-call")[0];
-    havingCall.style.display = 'none';
+    signalr.GetMedia((stream) => {
+        showCall();
+        $("#endCallBtn")[0].onclick = () => endCall(connectionId);
+        signalr.ChatHub.invoke('answerCall', true, connectionId);
+    });
 }
 
-function cancelCall() {
-    //TODO
-    var havingCall = $("#having-call");
-    havingCall.style.display = "none";
+function showCall() {
+    var videoCall = document.getElementById('video-call');
+    videoCall.style.display = 'block';
 }
 
-function sendImage(e) {
-
+function hideCall() {
+    var videoCall = document.getElementById('video-call');
+    videoCall.style.display = 'none';
 }
+
+function cancelCall(connectionId) {
+    $("#having-call").remove();
+    signalr.ChatHub.invoke('answerCall', false, connectionId);
+}
+
 
 //this function can remove a array element.
 Array.remove = function (array, from, to) {

@@ -134,12 +134,7 @@
     ChatHub.on("incomingCall", (callingUser) => {
         console.log(`incoming call from: ${JSON.stringify(callingUser)}`);
         console.log(`calling user connId: ${callingUser.ConnectionId}`);
-        GetMedia((stream) => {
-            var videoCall = document.getElementById('video-call');
-            videoCall.style.display = 'block';
-            $("#endCallBtn")[0].onclick = () => endCall(callingUser.ConnectionId);
-            ChatHub.invoke('answerCall', true, callingUser.ConnectionId);
-        });
+        createAlertHavingCall(callingUser, callingUser);
     });
     ChatHub.on("callAccepted", (acceptingUser) => {
         console.log(`call accepted from: ${JSON.stringify(acceptingUser)}.  Initiating WebRTC call and offering my stream up...`);
@@ -151,6 +146,7 @@
     ChatHub.on("callDeclined", (decliningUser, reason) => {
         console.log(`call declined from: ${decliningUser.ConnectionId}`);
         console.log(reason);
+        hideCall();
         // user idle
     });
     ChatHub.on("callEnded", (callingUser, reason) => {
