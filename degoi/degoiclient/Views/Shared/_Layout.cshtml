@@ -7,12 +7,28 @@
         var Config = {
             Api: "@Config.Api"
         };
+        function loadingDone() {
+            $("#loading").remove();
+        }
     </script>
     <script src="~/Scripts/degoiapi.js"></script>
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
     @RenderSection("head", false)
     <title>@ViewBag.Title - degoi</title>
+    <style>
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 1301;
+            background-color: black;
+        }
+    </style>
 </head>
 <body>
+    <div id="loading"></div>
     @RenderBody()
 </body>
 </html>

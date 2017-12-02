@@ -3,7 +3,6 @@
 }
 
 @section head {
-    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/bootstrap.min.css">
     <link rel="stylesheet" href="~/Content/bootstrap-theme.min.css">
     <script src="~/Scripts/bootstrap.min.js"></script>
@@ -20,6 +19,8 @@
         degoiapi.userInfo(
             (response) => {
                 user = response;
+                $("#username").text(user.Email);
+                loadingDone();
             },
             (jqXHR, textStatus, errorThrown) => window.location.replace("@Url.Action("Login", "Account")")
         );
@@ -172,7 +173,6 @@
         signalr.chatHub.stop();
     }
     window.onload = () => {
-        $("#username").text(user.Email);
         ajax.assign();
     }
 </script>
