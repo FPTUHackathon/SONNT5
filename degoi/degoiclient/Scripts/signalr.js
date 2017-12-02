@@ -137,14 +137,13 @@
         GetMedia((stream) => {
             var videoCall = document.getElementById('video-call');
             videoCall.style.display = 'block';
+            $("#endCallBtn")[0].onclick = () => endCall(callingUser.ConnectionId);
             ChatHub.invoke('answerCall', true, callingUser.ConnectionId);
-            $("#endCallBtn").on('click', () => endCall(callingUser.ConnectionId));
         });
     });
     ChatHub.on("callAccepted", (acceptingUser) => {
         console.log(`call accepted from: ${JSON.stringify(acceptingUser)}.  Initiating WebRTC call and offering my stream up...`);
         GetMedia((stream) => {
-            ConnectionManager.mediaStream = stream;
             ConnectionManager.initiateOffer(acceptingUser.ConnectionId, ConnectionManager.mediaStream);
         });
         // user in call
@@ -156,12 +155,15 @@
     });
     ChatHub.on("callEnded", (callingUser, reason) => {
         console.log("call with " + callingUser.ConnectionId + " has ended: " + reason);
-        ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
-        ConnectionManager.mediaStream = {};
+        var myCam = $("#my-cam")[0];
+        var videoCall = $("#video-call")[0];
+        myCam.src = "";
+        videoCall.style.display = "none";
+        ConnectionManager.mediaStream.getTracks().forEach((track) => {
+            track.stop();
+        });
         ConnectionManager.closeConnection(callingUser.ConnectionId);
-        var videoCall = document.getElementById('video-call');
-        videoCall.style.display = 'none';
-        //user idle
+        //ConnectionManager.mediaStream = {};
     });
     ChatHub.on('updateUserList', (userList) => {
         console.log(userList)
