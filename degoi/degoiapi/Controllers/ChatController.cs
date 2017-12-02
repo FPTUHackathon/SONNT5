@@ -1,4 +1,5 @@
-﻿using degoiapi.Hubs;
+﻿using degoiapi.Data;
+using degoiapi.Hubs;
 using degoiapi.Models.ChatModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
@@ -17,20 +18,11 @@ namespace degoiapi.Controllers {
     public class ChatController : ApiController {
         [Route("Room")]
         [HttpPost]
-        public string Room() {
+        public dynamic Room() {
             var httpRequest = HttpContext.Current.Request;
             var sUserIds = httpRequest.Form["sUserIds"];
-            string[] userIds = sUserIds.Split(',');
-            Array.Sort(userIds);
-            string roomId = "";
-            foreach (string userId in userIds) roomId += userId;
-            if (ChatHub.Rooms.Count(e => e.RoomId == roomId) == 0)
-                ChatHub.Rooms.Add(new Room() {
-                    Name = "Room",
-                    UserIds = userIds.ToList(),
-                    RoomId = roomId
-                });
-            return roomId;
+            return DbContext.GetRoomById(DbContext.GetRoomByUserIds(User.Identity.GetUserId(), sUserIds));
+            //return DbContext.GetRoom(User.Identity.GetUserId(), sUserIds);
         }
 
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
@@ -47,11 +39,13 @@ namespace degoiapi.Controllers {
                 //
                 var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
                 var user = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == User.Identity.GetUserId());
-                var userIds = ChatHub.Rooms.SingleOrDefault(r => r.RoomId == roomId).UserIds; // db
-                                                                                              // db
-                foreach (var userId in userIds) {
-                    var to = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == userId);
-                    if (to != null) hubContext.Clients.Client(to.ConnectionId).ReceiveMessage(user, $"{HttpRuntime.AppDomainAppVirtualPath}/Upload/{postedFile.FileName}", DateTime.Now, 2, roomId);
+                dynamic room = DbContext.GetRoomById(roomId);
+                var users = DbContext.GetUserIdsByRoomId(roomId);
+                var message = $"{HttpRuntime.AppDomainAppVirtualPath}/Upload/{postedFile.FileName}";
+                var msg = DbContext.GetMessage(DbContext.PostMessage(roomId, user.UserId, message, 2));
+                foreach (var userr in users) {
+                    var to = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == userr.UserId);
+                    if (to != null) hubContext.Clients.Client(to.ConnectionId).ReceiveMessage(user, message, msg.CreatedDate, msg.Status, room);
                 }
             }
             return Ok();

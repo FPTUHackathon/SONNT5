@@ -16,10 +16,10 @@
     <script src="~/Scripts/signalr.js"></script>
     <script>
         var user;
+        var loaded = false;
         degoiapi.userInfo(
             (response) => {
                 user = response;
-                $("#username").text(user.Email);
                 loadingDone();
             },
             (jqXHR, textStatus, errorThrown) => window.location.replace("@Url.Action("Login", "Account")")
@@ -129,13 +129,14 @@
     </div>
 
     <div id="video-control" class="video-control">
-        <button type="button" onclick="disableVideo()" id="disableVideoBtn"><i class="btn-disable-video"></i></button>
-        <button type="button" onclick="muted" id="mutedBtn"><i class="btn-muted"></i></button>
+        <button type="button" onclick="signalr.ToggleVideo()" id="disableVideoBtn"><i class="btn-disable-video"></i></button>
+        <button type="button" onclick="signalr.ToggleSound();" id="mutedBtn"><i class="btn-muted"></i></button>
         <button type="button" id="endCallBtn"><i class="btn-end-call"></i></button>
         <button type="button" onclick="exitFullScreen()" id="exitFullScreenBtn"><i class="btn-exit-fullscreen"></i></button>
     </div>
     <button type="button" id="full-screen" onclick="openFullScreen()" name="button"><i class="btn-fullscreen"></i></button>
 </div>
+
 
 @*<div class="popup-box chat-popup" id="e54d1506-00b0-4a06-84ef-031f52764a14" style="right: 220px; display: block;">
     <div class="popup-head" onclick="console.log('anhnttse04296@fpt.edu.vn');">
@@ -170,7 +171,6 @@
     AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
     AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br /> </div>*@
 <main>
-   
     @RenderBody()
 </main>
 
@@ -181,10 +181,11 @@
         );
     }
     window.onbeforeunload = () => {
-        signalr.ChatHub.stop();
+        signalr.ChatHub.dispose();
     }
     window.onload = () => {
         chatSliderBarCalcHeight();
         ajax.assign();
+        $("#username").text(user.Email);
     }
 </script>

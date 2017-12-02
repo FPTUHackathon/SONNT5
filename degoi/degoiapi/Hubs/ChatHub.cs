@@ -8,6 +8,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using degoiapi.Models.ChatModels;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using degoiapi.Data;
 
 namespace degoiapi.Hubs {
     [HubName("ChatHub")]
@@ -16,7 +17,6 @@ namespace degoiapi.Hubs {
         public static readonly ObservableCollection<User> OnlineUsers = new ObservableCollection<User>();
         public static readonly List<UserCall> UserCalls = new List<UserCall>();
         public static readonly List<CallOffer> CallOffers = new List<CallOffer>();
-        public static readonly List<Room> Rooms = new List<Room>();
 
         static ChatHub() {
             OnlineUsers.CollectionChanged += OnlineUsers_CollectionChanged;
@@ -46,20 +46,31 @@ namespace degoiapi.Hubs {
             return base.OnDisconnected(stopCalled);
         }
 
-        public void SendMessage(string message, int type, string roomId) {
-            var userIds = Rooms.SingleOrDefault(r => r.RoomId == roomId).UserIds; // db
+        public void GetMessageHistory(string roomId, string datetime) {
             var user = OnlineUsers.SingleOrDefault(e => e.ConnectionId == Context.ConnectionId);
-            // db
+            DateTime dt = DateTime.Now;
+            if (datetime != "") dt = DateTime.Parse(datetime);
+            Clients.Caller.History(roomId, DbContext.GetMessageHistory(user.UserId, roomId, dt, 5));
+        }
+
+        public void SendMessage(string message, string roomId) {
+            var userIds = DbContext.GetUserIdsByRoomId(roomId);
+            var user = OnlineUsers.SingleOrDefault(e => e.ConnectionId == Context.ConnectionId);
+            var msg = DbContext.GetMessage(DbContext.PostMessage(roomId, user.UserId, message, 0));
+            string sUserIds = "";
+            foreach (var userId in userIds) sUserIds += userId.UserId + ",";
+            sUserIds = sUserIds.Substring(0, sUserIds.Length - 1);
             foreach (var userId in userIds) {
-                var usr = OnlineUsers.SingleOrDefault(u => u.UserId == userId);
-                if (usr == null) return;
-                Clients.Client(usr.ConnectionId).ReceiveMessage(user, message, DateTime.Now, type, roomId);
+                dynamic room = DbContext.GetRoomById(DbContext.GetRoomByUserIds(user.UserId, sUserIds));
+                var usr = OnlineUsers.SingleOrDefault(u => u.UserId == userId.UserId);
+                if (usr == null) continue;
+                Clients.Client(usr.ConnectionId).ReceiveMessage(user, message, msg.CreatedDate, msg.Status, room);
             }
         }
 
-        public void CallUser(string targetConnectionId) {
+        public void CallUser(string UserId) {
             var callingUser = OnlineUsers.SingleOrDefault(u => u.ConnectionId == Context.ConnectionId);
-            var targetUser = OnlineUsers.SingleOrDefault(u => u.ConnectionId == targetConnectionId);
+            var targetUser = OnlineUsers.SingleOrDefault(u => u.UserId == UserId);
             if (callingUser == null) {
                 return;
             }
@@ -73,38 +84,38 @@ namespace degoiapi.Hubs {
                 Clients.Caller.callDeclined(targetUser, $"{targetUser.UserId} is already in a call.");
                 return;
             }
-            Clients.Client(targetConnectionId).incomingCall(callingUser);
+            Clients.Client(targetUser.ConnectionId).incomingCall(callingUser);
             CallOffers.Add(new CallOffer {
                 Caller = callingUser,
                 Callee = targetUser
             });
         }
 
-        public void AnswerCall(bool acceptCall, string targetConnectionId) {
+        public void AnswerCall(bool acceptCall, string UserId) {
             var callingUser = OnlineUsers.SingleOrDefault(u => u.ConnectionId == Context.ConnectionId);
-            var targetUser = OnlineUsers.SingleOrDefault(u => u.ConnectionId == targetConnectionId);
+            var targetUser = OnlineUsers.SingleOrDefault(u => u.UserId == UserId);
             if (callingUser == null) {
                 return;
             }
             if (targetUser == null) {
-                Clients.Caller.callEnded(targetConnectionId, "The other user in your call has left.");
+                Clients.Caller.callEnded(callingUser.ConnectionId, "The other user in your call has left.");
                 return;
             }
             if (callingUser.InCall) return;
             if (targetUser.InCall) return;
             if (acceptCall == false) {
-                Clients.Client(targetConnectionId).callDeclined(callingUser,
+                Clients.Client(targetUser.ConnectionId).callDeclined(callingUser,
                     $"{callingUser.UserId} did not accept your call.");
                 return;
             }
             var offerCount = CallOffers.RemoveAll(c => c.Callee.ConnectionId == callingUser.ConnectionId
                                                   && c.Caller.ConnectionId == targetUser.ConnectionId);
             if (offerCount < 1) {
-                Clients.Caller.callEnded(targetConnectionId, $"{targetUser.UserId} has already hung up.");
+                Clients.Caller.callEnded(targetUser.ConnectionId, $"{targetUser.UserId} has already hung up.");
                 return;
             }
-            if (GetUserCall(targetUser.ConnectionId) != null) {
-                Clients.Caller.callDeclined(targetConnectionId,
+            if (GetUserCall(targetUser.UserId) != null) {
+                Clients.Caller.callDeclined(targetUser.ConnectionId,
                     $"{targetUser.UserId} chose to accept someone elses call instead of yours :(");
                 return;
             }
@@ -112,7 +123,7 @@ namespace degoiapi.Hubs {
             UserCalls.Add(new UserCall {
                 Users = new List<User> { callingUser, targetUser }
             });
-            Clients.Client(targetConnectionId).callAccepted(callingUser);
+            Clients.Client(targetUser.ConnectionId).callAccepted(callingUser);
             SendUserListUpdate();
         }
 
@@ -121,7 +132,7 @@ namespace degoiapi.Hubs {
             if (callingUser == null) {
                 return;
             }
-            var currentCall = GetUserCall(callingUser.ConnectionId);
+            var currentCall = GetUserCall(callingUser.UserId);
             if (currentCall != null) {
                 foreach (var user in currentCall.Users.Where(u => u.ConnectionId != callingUser.ConnectionId)) {
                     Clients.Client(user.ConnectionId).callEnded(callingUser,
@@ -143,9 +154,9 @@ namespace degoiapi.Hubs {
             if (callingUser == null || targetUser == null) {
                 return;
             }
-            var userCall = GetUserCall(callingUser.ConnectionId);
+            var userCall = GetUserCall(callingUser.UserId);
             if (userCall != null && userCall.Users.Exists(u => u.ConnectionId == targetUser.ConnectionId)) {
-                Clients.Client(targetConnectionId).receiveSignal(callingUser, signal);
+                Clients.Client(targetUser.ConnectionId).receiveSignal(callingUser, signal);
             }
         }
 
@@ -155,9 +166,9 @@ namespace degoiapi.Hubs {
             Clients.All.updateUserList(OnlineUsers);
         }
 
-        private UserCall GetUserCall(string connectionId) {
+        private UserCall GetUserCall(string UserId) {
             var matchingCall =
-                UserCalls.SingleOrDefault(uc => uc.Users.SingleOrDefault(u => u.ConnectionId == connectionId) != null);
+                UserCalls.SingleOrDefault(uc => uc.Users.SingleOrDefault(u => u.UserId == UserId) != null);
             return matchingCall;
         }
         #endregion

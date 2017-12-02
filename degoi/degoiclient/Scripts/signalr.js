@@ -5,7 +5,7 @@
         connections: {},
         iceServers: [{ url: "stun:74.125.142.127:19302" }],
     };
-    ConnectionManager.createConnection = (partnerClientId) => {
+    ConnectionManager.createConnection = (partnerUserId, partnerClientId) => {
         console.log("WebRTC: creating connection...");
         var connection = new RTCPeerConnection({ iceServers: ConnectionManager.iceServers });
         connection.onicecandidate = (event) => {
@@ -29,13 +29,13 @@
             console.log("WebRTC: adding stream");
             //---
             console.log("binding remote stream to the partner window");
-            var otherVideo = document.getElementById("friend-cam");
-            attachMediaStream(otherVideo, event.stream);
+            var frCam = $("#friend-cam")[0];
+            attachMediaStream(frCam, event.stream);
         };
         connection.onremovestream = (event) => {
             console.log("WebRTC: removing stream");
         };
-        ConnectionManager.connections[partnerClientId] = connection;
+        ConnectionManager.connections[partnerUserId] = connection;
         return connection;
     };
     //------
@@ -61,8 +61,8 @@
             });
     };
     //----
-    ConnectionManager.newSignal = (partnerClientId, data) => {
-        var signal = JSON.parse(data), connection = ConnectionManager.getConnection(partnerClientId);
+    ConnectionManager.newSignal = (partnerUserId, partnerClientId, data) => {
+        var signal = JSON.parse(data), connection = ConnectionManager.getConnection(partnerUserId, partnerClientId);
         console.log("WebRTC: received signal");
         if (signal.sdp) {
             ConnectionManager.receivedSdpSignal(connection, partnerClientId, signal.sdp);
@@ -76,8 +76,8 @@
         connection.addIceCandidate(new RTCIceCandidate(candidate));
     };
     //-----
-    ConnectionManager.getConnection = (partnerClientId) => {
-        var connection = ConnectionManager.connections[partnerClientId] || ConnectionManager.createConnection(partnerClientId);
+    ConnectionManager.getConnection = (partnerUserId, partnerClientId) => {
+        var connection = ConnectionManager.connections[partnerUserId] || ConnectionManager.createConnection(partnerUserId, partnerClientId);
         return connection;
     };
     //-----
@@ -87,23 +87,23 @@
         }
     };
     //-----
-    ConnectionManager.closeConnection = (partnerClientId) => {
-        var connection = ConnectionManager.connections[partnerClientId];
+    ConnectionManager.closeConnection = (partnerUserId, partnerClientId) => {
+        var connection = ConnectionManager.connections[partnerUserId];
         if (connection) {
             console.log("removing remote stream from partner window");
-            var otherVideo = document.getElementById("friend-cam");
-            otherVideo.src = "";
+            var frCam = $("#friend-cam")[0];
+            frCam.src = "";
             connection.close();
-            delete ConnectionManager.connections[partnerClientId];
+            delete ConnectionManager.connections[partnerUserId];
         }
     };
     //------
-    ConnectionManager.initiateOffer = (partnerClientId, stream) => {
+    ConnectionManager.initiateOffer = (partnerUserId, partnerClientId, stream) => {
         if (typeof stream === "undefined" || stream == null || $.isEmptyObject(stream)) {
             console.log('stream is null[2]');
             return;
         }
-        var connection = ConnectionManager.getConnection(partnerClientId);
+        var connection = ConnectionManager.getConnection(partnerUserId, partnerClientId);
         connection.addStream(stream);
         console.log("stream added on my end");
         connection.createOffer((desc) => {
@@ -125,21 +125,22 @@
     ChatHub.on("duplicate", () => {
         $(document.body).html("<h1>Only 1 tab allowed</h1>");
     });
-    ChatHub.on("receiveMessage", (id, message, date, type, roomId) => {
-        addMessage(roomId, id, message, date, type);
+    ChatHub.on("receiveMessage", (userSend, message, date, type, room) => {
+        addMessage(room, userSend, message, date, type);
     });
     ChatHub.on('updateUsers', (users) => {
         createChatSliderBar(users);
+        listUsers = users;
     });
     ChatHub.on("incomingCall", (callingUser) => {
         console.log(`incoming call from: ${JSON.stringify(callingUser)}`);
         console.log(`calling user connId: ${callingUser.ConnectionId}`);
-        createAlertHavingCall(callingUser, callingUser);
+        createAlertHavingCall(callingUser);
     });
     ChatHub.on("callAccepted", (acceptingUser) => {
         console.log(`call accepted from: ${JSON.stringify(acceptingUser)}.  Initiating WebRTC call and offering my stream up...`);
         GetMedia((stream) => {
-            ConnectionManager.initiateOffer(acceptingUser.ConnectionId, ConnectionManager.mediaStream);
+            ConnectionManager.initiateOffer(acceptingUser.UserId, acceptingUser.ConnectionId, ConnectionManager.mediaStream);
         });
         // user in call
     });
@@ -150,11 +151,8 @@
         // user idle
     });
     ChatHub.on("callEnded", (callingUser, reason) => {
-        console.log("call with " + callingUser.ConnectionId + " has ended: " + reason);
-        var myCam = $("#my-cam")[0];
-        var videoCall = $("#video-call")[0];
-        myCam.src = "";
-        videoCall.style.display = "none";
+        console.log(`call with ${callingUser.ConnectionId} has ended: ${reason}`);
+        hideCall();
         ConnectionManager.mediaStream.getTracks().forEach((track) => {
             track.stop();
         });
@@ -165,7 +163,11 @@
         console.log(userList)
     });
     ChatHub.on("receiveSignal", (callingUser, data) => {
-        ConnectionManager.newSignal(callingUser.ConnectionId, data);
+        ConnectionManager.newSignal(callingUser.UserId, callingUser.ConnectionId, data);
+    });
+    ChatHub.on("history", (roomId, messages) => {
+        for (var i = 0; i < messages.length; i++) addMessageBefore(roomId, user.UserId, messages[i].MessContent, new Date(messages[i].CreatedDate), messages[i].Status);
+        console.log(messages)
     });
 
     connection.start().done(() => {

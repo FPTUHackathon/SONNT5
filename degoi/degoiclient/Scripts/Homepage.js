@@ -1,6 +1,8 @@
 //----GLOBAL VARIABLE----
 var HEIGHT_NAVIGATION = 52;
 var HEIGHT_MESSAGE_INPUT = 59;
+var listUsers = [];
+var rooms = [];
 ////----GLOBAL VARIABLE----
 
 //----NAVIGATION----
@@ -21,7 +23,7 @@ function createChatSliderBar(list) {
         if (list[i].UserId == user.UserId) continue;
         var item = document.createElement("div");
         item.classList.add("sidebar-name");
-        item.innerHTML = `<a href="javascript:register_popup('${list[i].ConnectionId}', '${list[i].Name}', '${list[i].UserId}');"> <img width="30" height="30" src="" /> <span>${list[i].Name}</span></a>`;
+        item.innerHTML = `<a href="javascript:register_popup('${list[i].Name}', '${list[i].UserId}');"> <img width="30" height="30" src="" /> <span>${list[i].Name}</span></a>`;
         chatSlidebar.appendChild(item);
         item = "";
     }
@@ -44,12 +46,11 @@ var total_popups = 0;
 var popups = [];
 
 //this is used to close a popup
-function close_popup(id) {
+function close_popup(room) {
     for (var iii = 0; iii < popups.length; iii++) {
-        if (id == popups[iii]) {
+        if (room.RoomId == popups[iii]) {
             Array.remove(popups, iii);
-            document.getElementById(id).style.display = "none";
-            calculate_popups();
+            $(`#${room.RoomId}`).remove();
             return;
         }
     }
@@ -69,44 +70,40 @@ function display_popups() {
     }
 }
 
-function create_popup(roomId, name, userId, connectionId) {
-    for (var iii = 0; iii < popups.length; iii++) {
-        //already registered. Bring it to front.
-        if (roomId == popups[iii]) {
-            Array.remove(popups, iii);
-            popups.unshift(roomId);
-            calculate_popups();
-            return;
-        }
-    }
+function create_popup(room) {
+    
     var popupBox = $("<div></div>")[0];
     popupBox.classList.add("popup-box");
     popupBox.classList.add("chat-popup");
-    popupBox.id = roomId;
+    popupBox.id = room.RoomId;
+    rooms[room.RoomId] = room;
 
-    popupBox.innerHTML = '<div class="popup-head">' +
-        '<div class="popup-head-left" >' + name +
-        '</div>' +
-        '<div class="popup-head-right">' +
-        '<a class="btn-callvideo" onclick="callPeople(\'' + roomId + '\',\'' + connectionId + '\')" href="#"></a>' +
-        '<a class="btn-closepopup" href="javascript:close_popup(\'' + roomId + '\');"></a>' +
-        '</div>' +
-        '<div style="clear: both">' +
-        '</div>' +
-        '</div> ' +
-        '<div class="chatbox-messages"> ' +
-        '</div>' +
-        '<div class="input-box">' +
-        '<textarea placeholder="Enter message" onkeypress="chatKeyPress(event, \'' + roomId +
-        '\')"></textarea>' +
-        '<a class="btn-addimage" href="#"></a> &nbsp' +
-        '<a class="btn-addfile" href="#"></a>' +
-        '</div>';
+    popupBox.innerHTML = `<div class="popup-head">` +
+        `<div class="popup-head-left" >${room.Name}` +
+        `</div>` +
+        `<div class="popup-head-right">` +
+        `<a class="btn-callvideo" onclick="callPeople(rooms['${room.RoomId}'])" href="#"></a>` +
+        `<a class="btn-closepopup" href="javascript:close_popup(rooms['${room.RoomId}']);"></a>` +
+        `</div>` +
+        `<div style="clear: both">` +
+        `</div>` +
+        `</div>` +
+        `<div class="chatbox-messages">` +
+        `</div>` +
+        `<div class="input-box">` +
+        `<textarea placeholder="Enter message" onkeypress="chatKeyPress(event, rooms['${room.RoomId}'])"></textarea>` +
+        `<form id="image${room.RoomId}">` +
+        `<input type="file" name="file" id="file" onchange="formSubmit(\'image${room.RoomId}\')">` +
+        `<input type="hidden" name="roomId" value="${room.RoomId}">` +
+        `</form>` +
+        `<a class="btn-addimage" href="#"></a> &nbsp` +
+        `<a class="btn-addfile" href="#"></a>` +
+        `</div>`;
 
     $("body")[0].append(popupBox);
-    $(`#image${roomId}`).on('submit', (event) => {
+    $(`#image${room.RoomId}`).on('submit', (event) => {
         event.preventDefault();
-        var fm = new FormData($(`#image${roomId}`)[0]);
+        var fm = new FormData($(`#image${room.RoomId}`)[0]);
         console.log(fm);
         $.ajax({
             url: 'https://localhost/degoiapi/api/Chat/Upload',
@@ -119,7 +116,7 @@ function create_popup(roomId, name, userId, connectionId) {
         });
         return false;
     })
-    popups.unshift(roomId);
+    popups.unshift(room.RoomId);
     calculate_popups();
     return popupBox;
 }
@@ -137,69 +134,78 @@ function calculate_popups() {
 }
 
 //creates markup for a new popup. Adds the id to popups array.
-function register_popup(connectionId, name, userId) {
+function register_popup(name, userId) {
     var userIds = [userId, user.UserId].sort().join(",");
     var form = $("<form></form>").append($(`<input type='text' name='sUserIds' value='${userIds}'/>`));
-    degoiapi.room($(form).serialize(), (response) => create_popup(response, name, userId, connectionId));
+    degoiapi.room($(form).serialize(), (response) => create_popup(response));
 }
 
 ////---- MANAGE CHAT POPUP----
 
 //---- VIDEO CALL INIT ----
 
-function callPeople(roomId, id) {
-    if (signalr.ConnectionManager.connections[id] != null) return;
-
-    $(`#${roomId}`).addClass("open-videocall");
-    var boxChat = $(`#${roomId}`)[0];
+function callPeople(room) {
+    var arr = room.UserIds.split(',');
+    var target = user.UserId == arr[0] ? target = arr[1] : target = arr[0];
+    console.log(arr)
+    //$(`#${room.roomId}`).addClass("open-videocall");
+    //var boxChat = $(`#${room.roomId}`)[0];
     setTimeout(function () {
         var videoCall = $("#video-call")[0];
         videoCall.style.display = 'block';
-        $(`#${roomId}`).removeClass("open-videocall");
+        $(`#${room.roomId}`).removeClass("open-videocall");
     }, 500);
 
-    
+    var HEIGHT_NAVIGATION = 52;
+    var HEIGHT_MESSAGE_INPUT = 59;
     var videoChatboxHeight = $(window).height() - HEIGHT_MESSAGE_INPUT - HEIGHT_NAVIGATION;
     $("#video-chatbox-message").css("height", videoChatboxHeight);
-
     //var videoCall = $("#video-call")[0];
     //videoCall.style.display = 'block';
-    $("#endCallBtn")[0].onclick = () => endCall(id);
+    $("#endCallBtn")[0].onclick = () => endCall(target);
     signalr.GetMedia();
-    signalr.ChatHub.invoke("callUser", id);
+    signalr.ChatHub.invoke("callUser", target);
 }
 
 function createAlertHavingCall(userdata) {
-    var str = `<p>${userdata.Name} calling you.</p>  <button type="button" onclick="acceptCall('${userdata.ConnectionId}')" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall('${userdata.ConnectionId}')" class="btn btn-danger">Cancel</button>`;
+    var str = `<p>${userdata.Name} calling you.</p>  <button type="button" onclick="acceptCall('${userdata.UserId}')" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall('${userdata.UserId}')" class="btn btn-danger">Cancel</button>`;
     var havingCall = $("<div id='having-call'></div>").html(str);
     $('body').append(havingCall);
 }
 
-function acceptCall(connectionId) {
-    //TODO
+function acceptCall(UserId) {
     $("#having-call").remove();
     var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
     signalr.GetMedia((stream) => {
         showCall();
-        $("#endCallBtn")[0].onclick = () => endCall(connectionId);
-        signalr.ChatHub.invoke('answerCall', true, connectionId);
+        $("#endCallBtn")[0].onclick = () => endCall(UserId);
+        signalr.ChatHub.invoke('answerCall', true, UserId);
     });
 }
 
+function cancelCall(UserId) {
+    $("#having-call").remove();
+    signalr.ChatHub.invoke('answerCall', false, UserId);
+}
+
 function showCall() {
-    var videoCall = document.getElementById('video-call');
+    var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
 }
 
 function hideCall() {
-    var videoCall = document.getElementById('video-call');
-    videoCall.style.display = 'none';
+    var videoCall = $("#video-call")[0];
+    videoCall.style.display = "none";
+    var myCam = $("#my-cam")[0];
+    myCam.src = "";
+    var frCam = $("#friend-cam")[0];
+    frCam.src = "";
 }
 
-function cancelCall(connectionId) {
+function cancelCall(UserId) {
     $("#having-call").remove();
-    signalr.ChatHub.invoke('answerCall', false, connectionId);
+    signalr.ChatHub.invoke('answerCall', false, UserId);
 }
 
 function endCall(id) {
@@ -258,49 +264,79 @@ function muted() {
 
 //---- SEND MESSAGE ----
 
-function addMessage(roomId, userr, message, date, type) {
-    var item = $(`#${roomId}`)[0];
-    if (!item) item = create_popup(roomId, userr.Name, userr.UserId, userr.ConnectionId);
+function addMessage(room, userSend, message, date, type) {
+    var item = $(`#${room.RoomId}`)[0];
+    var name = room.Name;
+    if (!item) item = create_popup(room);
     var chatbox = item.getElementsByClassName('chatbox-messages');
     //DEMO get message from array
     var stringHTML = "<ul>";
-    switch (type) {
-    case 2: {
-        stringHTML += "<li>"
-        if (userr.UserId == user.UserId) {
-            stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></li>`;
-        } else {
-            stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+        switch (type) {
+        case 2: {
+            stringHTML += "<li>"
+            if (userSend.UserId == user.UserId) {
+                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></li>`;
+            } else {
+                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+            }
+            break;
         }
-        break;
-    }
-    default: {
-        stringHTML += "<li>"
-        if (userr.UserId == user.UserId) {
-            stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
-        } else {
-            stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
+        default: {
+            stringHTML += "<li>"
+            if (userSend.UserId == user.UserId) {
+                stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
+            } else {
+                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
+            }
+            break;
         }
-        break;
-    }
     }
     stringHTML += "</ul>"
     $(chatbox[0]).append(stringHTML);
 }
 
-
-
 function formSubmit(id) {
     $(`#${id}`).submit();
 }
 
-
-function chatKeyPress(event, id) {
+function chatKeyPress(event, room) {
     if (event.charCode == 13) {
-        signalr.ChatHub.invoke("sendMessage", $(event.target).val(), 0, id);
+        signalr.ChatHub.invoke("sendMessage", $(event.target).val(), room.RoomId);
         $(event.target).val("");
     }
 }
 ////---- SEND MESSAGE ----
 
-
+function addMessageBefore(roomId, userr, message, date, type) {
+    var item = $(`#${roomId}`)[0];
+    var name = "";
+    for (var i = 0; i < listUsers.length; i++)
+        if (listUsers[i].UserId != user.UserId) name += listUsers[i].Name + ", ";
+    name = name.substring(0, name.length - 2);
+    if (!item) item = create_popup(roomId, name);
+    var chatbox = item.getElementsByClassName('chatbox-messages');
+    //DEMO get message from array
+    var stringHTML = "<ul>";
+    switch (type) {
+        case 2: {
+            stringHTML += "<li>"
+            if (userr.UserId == user.UserId) {
+                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></li>`;
+            } else {
+                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+            }
+            break;
+        }
+        default: {
+            stringHTML += "<li>"
+            if (userr.UserId == user.UserId) {
+                stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
+            } else {
+                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
+            }
+            break;
+        }
+    }
+    stringHTML += "</ul>"
+    $(chatbox[0]).prepend(stringHTML);
+}

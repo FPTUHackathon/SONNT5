@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace degoiapi.Models {
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
         public ApplicationDbContext()
-            : base("Server=.;Database=degoi;User Id=sa;Password=123456;", throwIfV1Schema: false) {
+            : base(ConfigurationManager.ConnectionStrings["db"].ConnectionString, throwIfV1Schema: false) {
         }
 
         public static ApplicationDbContext Create() {
