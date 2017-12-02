@@ -107,7 +107,9 @@
     <Compile Include="Controllers\LikeController.cs" />
     <Compile Include="Controllers\PostsController.cs" />
     <Compile Include="Controllers\ReplyController.cs" />
+    <Compile Include="DAO\CommentContext.cs" />
     <Compile Include="DAO\DBContext.cs" />
+    <Compile Include="DAO\ReplyContext.cs" />
     <Compile Include="DAO\PostContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

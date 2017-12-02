@@ -17,12 +17,15 @@
         var comment_base = "<h4><i class='fa fa-comment'></i><b>" + author + "</b> says: " +
                       "<small>" + crt_date + "</small>" +
                       "</h4><p>" + content + "</p>";
-        var like_button = "<a  class='btn btn-default' onclick='sendLike("+cmt_id+");'><span class='glyphicon glyphicon-hand-up'></span> " + like_count + "</a>";
+        var like_button_type = "btn-default";
+        if (like_status != 0)
+            like_button_type = "btn-primary";
+        var like_button = "<a  id ='likeButton"+cmt_id+"' class='btn "+like_button_type+"' onclick='sendLike("+cmt_id+");'><span class='glyphicon glyphicon-hand-up'></span><span id='likecount"+cmt_id+"'>" + like_count + "</span></a>";
         var div_reply = "<div id='reply_of_" + cmt_id + "'></div>";
+        var like_status = "<input type='hidden' id='likestatusof" + cmt_id + "' value='"+like_status+"'/>";
         var reply_input_box = "" +
-                   "<input class='form-control col-lg-8' type='text' id = 'cmt_reply_create_box_"+cmt_id+"'></input>" +
-                    "<button type='button' class='btn' onclick='sendNewReply("+cmt_id+")'><i class='fa fa-reply'></i> Reply</button>";
-
+                   "<input class='form-control col-lg-8' type='text' id = 'ReplyCrtBox"+cmt_id+"'></input>" +
+                    "<button type='button' class='btn' onclick='sendNewReply("+cmt_id+")'><i class='fa fa-reply'></i> Reply</button>";       
         var end_comment = "<br><hr>";
 
         $("#comment-container").append(comment_base + like_button +div_reply + reply_input_box + end_comment);
@@ -35,22 +38,49 @@
     }
     function sendNewComment(post_id) {
         //Lay userID!!!!!!!!!!!!
-        var userID = "user1";
-        var CmtContent = $("#cmt_content").val();
-        $.get('http://localhost:51922/api/Comment/Post?post_id='+post_id+'&CmtContent='+CmtContent+'&user_id='+userID,
+        var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+        var CmtContent = $("#cmtContentCrtBox").val();
+        $.get('http://localhost:51922/api/Comment/Get?post_id='+post_id+'&CmtContent='+CmtContent+'&user_id='+userID,
             function (data) {
-                //if true -> reload
+                location.reload();
             });
     }
     function sendNewReply(cmt_id) {
         //Lay userID!!!!!!!!!!!!!!
-        var userID = "user1";
-        var CmtContent = $("#cmt_reply_create_box_"+cmt_id).val();
+        var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+        var replyContent = $("#ReplyCrtBox" + cmt_id).val();
+        $.get('http://localhost:51922/api/Reply/Post?cmt_id=' + cmt_id + '&ReplyContent=' + replyContent + '&user_id=' + userID,
+            function (data) {
+                location.reload();
+            });
     }
     function sendLike(cmt_id) {
         //Lay userID!!!!!!!!!!!!!!
-        var userID = "user1";
-        window.location.replace("google.com");
+        var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+        var like_count = parseInt($("#likecount" + cmt_id).text());
+        var like_status = $("#likestatusof" + cmt_id).val();
+        console.log("status"+like_status);
+        if (like_status == 0)
+            Like(cmt_id, like_count + 1);
+        else
+            Dislike(cmt_id, like_count - 1);
+        $.get('http://localhost:51922/api/Like/Get?user_id=' + userID+ '&cmt_id=' + cmt_id + '&status=' + (1-like_status),
+             function (data) {
+                 
+             });
+        
+    }
+    function Like(cmt_id,like_count) {
+        document.getElementById("likeButton" + cmt_id).classList.remove('btn-default');
+        document.getElementById("likeButton" + cmt_id).classList.add('btn-primary');
+        $("#likecount" + cmt_id).text(like_count);
+        $("#likestatusof" + cmt_id).val(1);
+    }
+    function Dislike(cmt_id,like_count) {
+        document.getElementById("likeButton" + cmt_id).classList.remove('btn-primary');
+        document.getElementById("likeButton" + cmt_id).classList.add('btn-default');
+        $("#likecount" + cmt_id).text(like_count);
+        $("#likestatusof" + cmt_id).val(0);
     }
 </script>
 <!--Link original template: https://bootsnipp.com/fullscreen/kMmOW -->
@@ -93,7 +123,7 @@
             </div>
             @foreach (JSHackathon_QA.Models.Comment comment in Model)
             {
-                <script> addComment('@comment.id', '@comment.author', '@comment.crt_date', '@comment.content','@comment.like_count','@comment.likeStatusOfCurrentUser');</script>
+                <script> addComment('@comment.id', '@comment.author', '@comment.crt_date', '@comment.content','@comment.like_count','@(comment.likeStatusOfCurrentUser==true?1:0)');</script>
                 foreach (JSHackathon_QA.Models.Reply reply in comment.replies)
                 {
                     <script> addReply('@comment.id', '@reply.author', '@reply.crt_date', '@reply.content');</script>
@@ -106,7 +136,7 @@
                 
                 <div class="form-group form-group-lg">
                     <div class="col-sm-12">
-                        <textarea class="form-control form-control-inline" rows="3" id="cmt_content"></textarea>
+                        <textarea class="form-control form-control-inline" rows="3" id="cmtContentCrtBox"></textarea>
                     </div>
                 </div>
                 <button type="button" class="btn btn-primary" onclick="sendNewComment(@(((Post)ViewData["qa"]).id));"><i class="fa fa-reply"></i> Submit</button>

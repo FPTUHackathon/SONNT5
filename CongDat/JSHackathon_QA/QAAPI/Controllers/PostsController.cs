@@ -29,6 +29,7 @@ namespace QAAPI.Controllers
         }
         public int Get(string userID,string title,string content,string tags)
         {
+            //TODO: add post
             int post_id = new PostContext().addPost(userID,title, content, tags, "12/3/2017");
             return post_id;
         }
