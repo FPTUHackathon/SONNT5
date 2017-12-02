@@ -26,6 +26,35 @@ namespace degoiapi.Controllers {
         }
 
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Route("CreateGroupSearch")]
+        [HttpGet]
+        public dynamic CreateGroupSearch(string searchquery)
+        {
+            var httpRequest = HttpContext.Current.Request;
+            var searchInput = httpRequest.Form["search-input"];
+            List<dynamic> list = new List<dynamic>();
+            list.Add(new
+            {
+                UserId = "UserId01",
+                FullName = "Nguyen Tien Tuan Anh"
+
+            });
+            list.Add(new
+            {
+                UserId = "UserId02",
+                FullName = "Nguyen Huu Tuan"
+
+            });
+            list.Add(new
+            {
+                UserId = "UserId03",
+                FullName = "Phung Khac Thanh"
+
+            });
+            return list;
+        }
+
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("Upload")]
         [HttpPost]
         public IHttpActionResult Upload() {
