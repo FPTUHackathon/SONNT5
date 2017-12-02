@@ -12,10 +12,6 @@ namespace degoiclient.Controllers {
             return View();
         }
 
-        public ActionResult Call() {
-            return View();
-        }
-
         public ActionResult Test1() {
             return View();
         }
