@@ -198,7 +198,7 @@ function callPeople(id) {
     if (signalr.ConnectionManager.connections[id] != null) return;
     var videoCall = $("#video-call")[0];
     videoCall.style.display = 'block';
-    $("#endCallBtn").on('click', () => endCall(id));
+    $("#endCallBtn")[0].onclick = () => endCall(id);
     signalr.GetMedia();
     signalr.ChatHub.invoke("callUser", id);
 }
@@ -230,14 +230,16 @@ function openFullScreen() {
 }
 
 function endCall(id) {
+    var myCam = $("#my-cam")[0];
     var videoCall = $("#video-call")[0];
+    myCam.src = "";
     videoCall.style.display = "none";
-    signalr.ConnectionManager.mediaStream.getVideoTracks().forEach((track) => track.stop());
-    signalr.ConnectionManager.mediaStream = {};
     signalr.ConnectionManager.closeConnection(id);
-    signalr.ChatHub.invoke('hangUp');
-    var videoCall = document.getElementById('video-call');
-    videoCall.style.display = 'none';
+    signalr.ConnectionManager.mediaStream.getTracks().forEach((track) => {
+        track.stop();
+    });
+    //signalr.ConnectionManager.mediaStream = {};
+    signalr.ChatHub.invoke("hangUp");
 }
 
 function disableVideo() {
