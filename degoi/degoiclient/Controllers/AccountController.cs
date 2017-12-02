@@ -4,25 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace degoiclient.Controllers
-{
-    public class AccountController : Controller
-    {
+namespace degoiclient.Controllers {
+    public class AccountController : Controller {
         // GET: Account/Login
-        public ActionResult Login()
-        {
+        public ActionResult Login() {
             return View();
         }
 
         // GET: Account/Register
-        public ActionResult Register()
-        {
-            return View();
-        }
-
-        // GET: Account/ChangeInfo
-        public ActionResult ChangeInfo()
-        {
+        public ActionResult Register() {
             return View();
         }
     }

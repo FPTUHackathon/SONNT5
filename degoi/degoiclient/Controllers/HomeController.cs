@@ -23,5 +23,10 @@ namespace degoiclient.Controllers {
         public ActionResult Test2() {
             return View();
         }
+
+        // GET: Account/ChangeInfo
+        public ActionResult ChangeInfo() {
+            return View();
+        }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -34,15 +35,25 @@ namespace degoiapi.Controllers {
             if (httpRequest.Files.Count < 1) return BadRequest();
             foreach (string file in httpRequest.Files) {
                 var postedFile = httpRequest.Files[file];
-                var filePath = HttpContext.Current.Server.MapPath("~/Upload/") + postedFile.FileName;
+                var folderName = $"{postedFile.FileName}{DateTime.Now.Ticks}";
+                var dirPath = $"{HttpContext.Current.Server.MapPath("~/Upload/")}/{folderName}";
+                Directory.CreateDirectory(dirPath);
+                var filePath = $"{dirPath}/{postedFile.FileName}";
                 postedFile.SaveAs(filePath);
                 //
                 var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
                 var user = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == User.Identity.GetUserId());
                 dynamic room = DbContext.GetRoomById(roomId);
                 var users = DbContext.GetUserIdsByRoomId(roomId);
-                var message = $"{HttpRuntime.AppDomainAppVirtualPath}/Upload/{postedFile.FileName}";
-                var msg = DbContext.GetMessage(DbContext.PostMessage(roomId, user.UserId, message, 2));
+                var message = $"{HttpRuntime.AppDomainAppVirtualPath}/Upload/{folderName}/{postedFile.FileName}";
+                var type = 1;
+                List<string> imageExts = new List<string>() { ".jpg", ".jpeg", ".bmp", ".png", ".ico", ".gif" };
+                foreach (string imageExt in imageExts)
+                    if (postedFile.FileName.EndsWith(imageExt)) {
+                        type = 2;
+                        break;
+                    }
+                var msg = DbContext.GetMessage(DbContext.PostMessage(roomId, user.UserId, message, type));
                 foreach (var userr in users) {
                     var to = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == userr.UserId);
                     if (to != null) hubContext.Clients.Client(to.ConnectionId).ReceiveMessage(user, message, msg.CreatedDate, msg.Status, room);

@@ -127,6 +127,7 @@
     });
     ChatHub.on("receiveMessage", (userSend, message, date, type, room) => {
         addMessage(room, userSend, message, date, type);
+        if (!lastMsgTimestamps[room.RoomId]) lastMsgTimestamps[room.RoomId] = date;
     });
     ChatHub.on('updateUsers', (users) => {
         createChatSliderBar(users);
@@ -145,7 +146,8 @@
         // user in call
     });
     ChatHub.on("callDeclined", (decliningUser, reason) => {
-        console.log(`call declined from: ${decliningUser.ConnectionId}`);
+        if (decliningUser && decliningUser.ConnectionId) console.log(`call declined from: ${decliningUser.ConnectionId}`);
+        else console.log(`can not call`)
         console.log(reason);
         hideCall();
         // user idle
@@ -165,9 +167,11 @@
     ChatHub.on("receiveSignal", (callingUser, data) => {
         ConnectionManager.newSignal(callingUser.UserId, callingUser.ConnectionId, data);
     });
-    ChatHub.on("history", (roomId, messages) => {
-        for (var i = 0; i < messages.length; i++) addMessageBefore(roomId, user.UserId, messages[i].MessContent, new Date(messages[i].CreatedDate), messages[i].Status);
-        console.log(messages)
+    ChatHub.on("history", (room, messages) => {
+        for (var i = 0; i < messages.length; i++) {
+            addMessageBefore(room, messages[i].UserId, messages[i].MessContent, new Date(messages[i].CreatedDate), messages[i].Status);
+            lastMsgTimestamps[room.RoomId] = messages[i].CreatedDate;
+        }
     });
 
     connection.start().done(() => {

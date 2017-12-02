@@ -114,5 +114,19 @@
             },
             fail
         );
+    },
+    searchUser: (data, done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/User/Search",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            (response) => {
+                if (done) done(response);
+            },
+            fail
+        );
     }
 };

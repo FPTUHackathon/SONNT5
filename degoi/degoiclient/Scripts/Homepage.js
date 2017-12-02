@@ -3,6 +3,7 @@ var HEIGHT_NAVIGATION = 52;
 var HEIGHT_MESSAGE_INPUT = 59;
 var listUsers = [];
 var rooms = [];
+var lastMsgTimestamps = [];
 ////----GLOBAL VARIABLE----
 
 //----NAVIGATION----
@@ -22,6 +23,7 @@ function createChatSliderBar(list) {
     for (var i = 0; i < list.length; i++) {
         if (list[i].UserId == user.UserId) continue;
         var item = document.createElement("div");
+        if (!list[i].Online) item.style = "background-color: gray";
         item.classList.add("sidebar-name");
         item.innerHTML = `<a href="javascript:register_popup('${list[i].Name}', '${list[i].UserId}');"> <img width="30" height="30" src="" /> <span>${list[i].Name}</span></a>`;
         chatSlidebar.appendChild(item);
@@ -88,23 +90,26 @@ function create_popup(room) {
         `<div style="clear: both">` +
         `</div>` +
         `</div>` +
-        `<div class="chatbox-messages">` +
+        `<div class="chatbox-messages" id="chatbox${room.RoomId}">` +
         `</div>` +
         `<div class="input-box">` +
         `<textarea placeholder="Enter message" onkeypress="chatKeyPress(event, rooms['${room.RoomId}'])"></textarea>` +
         `<form id="image${room.RoomId}">` +
-        `<input type="file" name="file" id="file" onchange="formSubmit(\'image${room.RoomId}\')">` +
+        `<input id="imagesubmit${room.RoomId}" type="file" name="file" id="file" accept="image/*" onchange="formSubmit(\'image${room.RoomId}\')">` +
         `<input type="hidden" name="roomId" value="${room.RoomId}">` +
         `</form>` +
-        `<a class="btn-addimage" href="#"></a> &nbsp` +
-        `<a class="btn-addfile" href="#"></a>` +
+        `<form id="file${room.RoomId}">` +
+        `<input id="filesubmit${room.RoomId}" type="file" name="file" id="file" onchange="formSubmit(\'file${room.RoomId}\')">` +
+        `<input type="hidden" name="roomId" value="${room.RoomId}">` +
+        `</form>` +
+        `<a class="btn-addimage" href="#" onclick="$('#imagesubmit${room.RoomId}').click();return false;"></a> &nbsp` +
+        `<a class="btn-addfile" href="#" onclick="$('#filesubmit${room.RoomId}').click();return false;"></a>` +
         `</div>`;
 
     $("body")[0].append(popupBox);
     $(`#image${room.RoomId}`).on('submit', (event) => {
         event.preventDefault();
         var fm = new FormData($(`#image${room.RoomId}`)[0]);
-        console.log(fm);
         $.ajax({
             url: 'https://localhost/degoiapi/api/Chat/Upload',
             type: 'post',
@@ -115,7 +120,27 @@ function create_popup(room) {
             success: (e) => console.log(e)
         });
         return false;
-    })
+    });
+    $(`#file${room.RoomId}`).on('submit', (event) => {
+        event.preventDefault();
+        var fm = new FormData($(`#file${room.RoomId}`)[0]);
+        $.ajax({
+            url: 'https://localhost/degoiapi/api/Chat/Upload',
+            type: 'post',
+            data: fm,
+            async: false,
+            contentType: false,
+            processData: false,
+            success: (e) => console.log(e)
+        });
+        return false;
+    });
+    lastMsgTimestamps[room.RoomId] = "";
+    $(`#chatbox${room.RoomId}`).on("scroll", (event) => {
+        var roomId = $(event.target).attr("id").split("chatbox")[1];
+        if ($(event.target).scrollTop() < 22) signalr.ChatHub.invoke("getMessageHistory", room.RoomId, lastMsgTimestamps[room.RoomId]);
+    });
+    signalr.ChatHub.invoke("getMessageHistory", room.RoomId, lastMsgTimestamps[room.RoomId]);
     popups.unshift(room.RoomId);
     calculate_popups();
     return popupBox;
@@ -146,24 +171,20 @@ function register_popup(name, userId) {
 
 function callPeople(room) {
     var arr = room.UserIds.split(',');
+    if (arr.length != 2) return;
     var target = user.UserId == arr[0] ? target = arr[1] : target = arr[0];
-    console.log(arr)
     //$(`#${room.roomId}`).addClass("open-videocall");
     //var boxChat = $(`#${room.roomId}`)[0];
     setTimeout(function () {
-        var videoCall = $("#video-call")[0];
-        videoCall.style.display = 'block';
         $(`#${room.roomId}`).removeClass("open-videocall");
     }, 500);
-
     var HEIGHT_NAVIGATION = 52;
     var HEIGHT_MESSAGE_INPUT = 59;
     var videoChatboxHeight = $(window).height() - HEIGHT_MESSAGE_INPUT - HEIGHT_NAVIGATION;
+    var videoCall = $("#video-call")[0];
+    videoCall.style.display = 'block';
     $("#video-chatbox-message").css("height", videoChatboxHeight);
-    //var videoCall = $("#video-call")[0];
-    //videoCall.style.display = 'block';
     $("#endCallBtn")[0].onclick = () => endCall(target);
-    signalr.GetMedia();
     signalr.ChatHub.invoke("callUser", target);
 }
 
@@ -195,8 +216,7 @@ function showCall() {
 }
 
 function hideCall() {
-    var videoCall = $("#video-call")[0];
-    videoCall.style.display = "none";
+    $("#video-call").css("display", "none");
     var myCam = $("#my-cam")[0];
     myCam.src = "";
     var frCam = $("#friend-cam")[0];
@@ -264,26 +284,30 @@ function muted() {
 
 //---- SEND MESSAGE ----
 
-function addMessage(room, userSend, message, date, type) {
-    var item = $(`#${room.RoomId}`)[0];
-    var name = room.Name;
-    if (!item) item = create_popup(room);
-    var chatbox = item.getElementsByClassName('chatbox-messages');
-    //DEMO get message from array
+function createMessage(userId, message, type) {
     var stringHTML = "<ul>";
-        switch (type) {
+    switch (type) {
         case 2: {
             stringHTML += "<li>"
-            if (userSend.UserId == user.UserId) {
-                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></li>`;
+            if (userId == user.UserId) {
+                stringHTML += `<span class="right"><a href="${message}" target="__blank"><img src="${message}" class="clear"></img></a></span></li>`;
             } else {
-                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+                stringHTML += `<span class="left"><a href="${message}" target="__blank"><img src="${message}" class="clear"></img></a></span></li>`;
+            }
+            break;
+        }
+        case 1: {
+            stringHTML += "<li>"
+            if (userId == user.UserId) {
+                stringHTML += `<span class="right"><a href="${message}" target="__blank">${message.substring(message.lastIndexOf("/") + 1)}</a></span></li>`;
+            } else {
+                stringHTML += `<span class="left"><a href="${message}" target="__blank">${message.substring(message.lastIndexOf("/") + 1)}</a></span></li>`;
             }
             break;
         }
         default: {
             stringHTML += "<li>"
-            if (userSend.UserId == user.UserId) {
+            if (userId == user.UserId) {
                 stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
             } else {
                 stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
@@ -291,8 +315,17 @@ function addMessage(room, userSend, message, date, type) {
             break;
         }
     }
-    stringHTML += "</ul>"
-    $(chatbox[0]).append(stringHTML);
+    stringHTML += "</ul>";
+    return stringHTML;
+}
+
+function addMessage(room, userSend, message, date, type) {
+    var item = $(`#${room.RoomId}`)[0];
+    var name = room.Name;
+    if (!item) item = create_popup(room);
+    var chatbox = item.getElementsByClassName('chatbox-messages');
+    //DEMO get message from array
+    $(chatbox[0]).append(createMessage(userSend.UserId, message, type));
 }
 
 function formSubmit(id) {
@@ -307,36 +340,11 @@ function chatKeyPress(event, room) {
 }
 ////---- SEND MESSAGE ----
 
-function addMessageBefore(roomId, userr, message, date, type) {
-    var item = $(`#${roomId}`)[0];
-    var name = "";
-    for (var i = 0; i < listUsers.length; i++)
-        if (listUsers[i].UserId != user.UserId) name += listUsers[i].Name + ", ";
-    name = name.substring(0, name.length - 2);
-    if (!item) item = create_popup(roomId, name);
+function addMessageBefore(room, userId, message, date, type) {
+    var item = $(`#${room.RoomId}`)[0];
+    var name = room.Name;
+    if (!item) item = create_popup(room);
     var chatbox = item.getElementsByClassName('chatbox-messages');
     //DEMO get message from array
-    var stringHTML = "<ul>";
-    switch (type) {
-        case 2: {
-            stringHTML += "<li>"
-            if (userr.UserId == user.UserId) {
-                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></li>`;
-            } else {
-                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></div></li>`;
-            }
-            break;
-        }
-        default: {
-            stringHTML += "<li>"
-            if (userr.UserId == user.UserId) {
-                stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
-            } else {
-                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
-            }
-            break;
-        }
-    }
-    stringHTML += "</ul>"
-    $(chatbox[0]).prepend(stringHTML);
+    $(chatbox[0]).prepend(createMessage(userId, message, type));
 }

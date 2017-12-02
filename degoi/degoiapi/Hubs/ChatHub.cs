@@ -23,7 +23,28 @@ namespace degoiapi.Hubs {
         }
 
         private static void OnlineUsers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) {
-            GlobalHost.ConnectionManager.GetHubContext<ChatHub>().Clients.All.UpdateUsers(OnlineUsers);
+            List<dynamic> users = DbContext.GetUsers();
+            List<dynamic> userStates = new List<dynamic>();
+            bool added = false;
+            foreach (var user in users) {
+                added = false;
+                foreach (var onlUser in OnlineUsers)
+                    if (user.UserId == onlUser.UserId) {
+                        userStates.Add(new {
+                            UserId = user.UserId,
+                            Name = user.Name,
+                            Online = true
+                        });
+                        added = true;
+                        break;
+                    }
+                if (!added) userStates.Add(new {
+                    UserId = user.UserId,
+                    Name = user.Name,
+                    Online = false
+                });
+            }
+            GlobalHost.ConnectionManager.GetHubContext<ChatHub>().Clients.All.UpdateUsers(userStates);
         }
 
         public override Task OnConnected() {
@@ -49,8 +70,8 @@ namespace degoiapi.Hubs {
         public void GetMessageHistory(string roomId, string datetime) {
             var user = OnlineUsers.SingleOrDefault(e => e.ConnectionId == Context.ConnectionId);
             DateTime dt = DateTime.Now;
-            if (datetime != "") dt = DateTime.Parse(datetime);
-            Clients.Caller.History(roomId, DbContext.GetMessageHistory(user.UserId, roomId, dt, 5));
+            if (datetime != "" && datetime != null) dt = DateTime.Parse(datetime);
+            Clients.Caller.History(DbContext.GetRoomById(roomId), DbContext.GetMessageHistory(user.UserId, roomId, dt, 9));
         }
 
         public void SendMessage(string message, string roomId) {
@@ -121,7 +142,9 @@ namespace degoiapi.Hubs {
             }
             CallOffers.RemoveAll(c => c.Caller.ConnectionId == targetUser.ConnectionId);
             UserCalls.Add(new UserCall {
-                Users = new List<User> { callingUser, targetUser }
+                Users = new List<User> { callingUser, targetUser },
+                TimeStart = DateTime.Now,
+                TimeEnd = DateTime.Now,
             });
             Clients.Client(targetUser.ConnectionId).callAccepted(callingUser);
             SendUserListUpdate();
@@ -134,6 +157,9 @@ namespace degoiapi.Hubs {
             }
             var currentCall = GetUserCall(callingUser.UserId);
             if (currentCall != null) {
+                currentCall.TimeEnd = DateTime.Now;
+                var targetUser = currentCall.Users.SingleOrDefault(u => u.UserId != callingUser.UserId);
+                DbContext.LogVideo(callingUser.UserId, targetUser.UserId, currentCall.TimeStart, currentCall.TimeEnd);
                 foreach (var user in currentCall.Users.Where(u => u.ConnectionId != callingUser.ConnectionId)) {
                     Clients.Client(user.ConnectionId).callEnded(callingUser,
                         $"{callingUser.UserId} has hung up.");

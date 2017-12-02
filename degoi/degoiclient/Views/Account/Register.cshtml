@@ -96,84 +96,49 @@
         <div class="row">
             <form id="register">
                 <div class="col-sm-12">
-                    <div class="row">
+
+                    @*<div class="row">
                         <div class="col-sm-6 form-group">
                             <label>First Name</label>
-                            <input type="text" placeholder="Enter First Name Here.." class="form-control">
+                            <input type="text" placeholder="First Name" class="form-control">
                         </div>
                         <div class="col-sm-6 form-group">
                             <label>Last Name</label>
-                            <input type="text" placeholder="Enter Last Name Here.." class="form-control">
+                            <input type="text" placeholder="Last Name" class="form-control">
                         </div>
-                    </div>
+                    </div>*@
                     <div class="row">
                         <div class="col-sm-4 form-group">
-                            <label for="country" class="control-label">Country</label>
-                            <div class="">
-                                <select id="country" class="form-control">
-                                    <option>USA</option>
-                                    <option>VietNam</option>
-                                </select>
-                            </div>
+                            <label>Email</label>
+                            <input type="text" name="Email" placeholder="Email" class="form-control">
                         </div>
                         <div class="col-sm-4 form-group">
-                            <label for="phone" class="control-label">Phone</label>
-                            <input type="text" placeholder="Enter Phone Number Here.." id="phone" class="form-control">
+                            <label>Password</label>
+                            <input type="text" name="Password" placeholder="Password" class="form-control">
                         </div>
                         <div class="col-sm-4 form-group">
-                            <label for="birthDate" class="control-label">Date of Birth</label>
-                            <div class="">
-                                <input type="date" id="birthDate" class="form-control">
-                            </div>
+                            <label>Confirm Password</label>
+                            <input type="text" name="ConfirmPassword" placeholder="Confirm Password" class="form-control">
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="control-label">Gender</label>
-                        <div class="">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <label class="radio-inline">
-                                        <input type="radio" id="femaleRadio" value="Female">Female
-                                    </label>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="radio-inline">
-                                        <input type="radio" id="maleRadio" value="Male">Male
-                                    </label>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="radio-inline">
-                                        <input type="radio" id="uncknownRadio" value="Unknown">Unknown
-                                    </label>
-                                </div>
-                            </div>
+                    @*<div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label>Email</label>
+                            <input type="text" placeholder="Email" class="form-control">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label>Re-Email</label>
+                            <input type="text" placeholder="Re-Email" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Language</label>
-                        <div class="">
-                            <div class="row">
-                                <div class="col-sm-6 checkbox">
-                                    <label>
-                                        <input type="checkbox" id="language" value="English">English
-                                    </label>
-                                </div>
-                                <div class="col-sm-6 checkbox">
-                                    <label>
-                                        <input type="checkbox" id="language" value="Tieng Viet">Tieng Viet
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="text" placeholder="Enter Email Address Here.." class="form-control">
-                    </div>
-                    <button type="button" class="btn btn-info btn-block" float="right" onlclic="register()">Submit</button>
+                        <label>Phone Number</label>
+                        <input type="text" placeholder="Enter Phone Number Here.." class="form-control">
+                    </div>*@
+                    <button type="button" class="btn btn-lg btn-info" onclick="register()">Submit</button>
                 </div>
-            </form> 
+            </form>
         </div>
     </div>
 </div>

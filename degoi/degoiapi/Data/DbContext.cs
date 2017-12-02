@@ -31,6 +31,37 @@ namespace degoiapi.Data {
             return list;
         }
 
+        public static List<dynamic> GetUsers() {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT * FROM AspNetUsers", connection);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new {
+                UserId = reader[0].ToString(),
+                Name = reader[1].ToString()
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static List<dynamic> SearchUserByName(string name) {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT TOP 5 * FROM AspNetUsers WHERE UserName LIKE @name", connection);
+            command.Parameters.AddWithValue("@name", $"%{name}%");
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new {
+                UserId = reader[0].ToString(),
+                Name = reader[1].ToString()
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
         public static dynamic GetNumUserByRoomId(string roomId) {
             SqlConnection connection = GetConnection();
             connection.Open();
@@ -127,14 +158,28 @@ namespace degoiapi.Data {
             while (reader.Read()) result.Add(new {
                 RoomName = reader[0].ToString(),
                 RoomId = reader[1].ToString(),
-                UserId = reader[2].ToString(),
-                MessContent = reader[3].ToString(),
-                Status = Convert.ToUInt32(reader[4]),
-                CreatedDate = Convert.ToDateTime(reader[5])
+                FullName = reader[2].ToString(),
+                UserId = reader[3].ToString(),
+                MessContent = reader[4].ToString(),
+                Status = Convert.ToUInt32(reader[5]),
+                CreatedDate = Convert.ToDateTime(reader[6])
             });
             reader.Close();
             connection.Close();
             return result;
+        }
+        public static void LogVideo(string userId1, string userId2, DateTime startTime, DateTime endTime) {
+            var roomId = DbContext.GetRoomByUserIds(userId1, $"{userId1},{userId2}");
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_LOG_VIDEO$POST @userId1, @userId2, @roomId, @startTime, @endTime", connection);
+            command.Parameters.AddWithValue("@userId1", userId1);
+            command.Parameters.AddWithValue("@userId2", userId2);
+            command.Parameters.AddWithValue("@roomId", roomId);
+            command.Parameters.AddWithValue("@startTime", startTime);
+            command.Parameters.AddWithValue("@endTime", endTime);
+            command.ExecuteNonQuery();
+            connection.Close();
         }
     }
 }
