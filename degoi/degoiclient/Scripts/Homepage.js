@@ -1,34 +1,18 @@
-function addMessage(roomId, userr, message, date, type) {
-    var item = $(`#${roomId}`)[0];
-    if (!item) item = create_popup(roomId, userr.Name, userr.UserId, userr.ConnectionId);
-    var chatbox = item.getElementsByClassName('chatbox-messages');
-    //DEMO get message from array
-    var stringHTML = "<ul>";
-        switch (type) {
-        case 2: {
-            stringHTML += "<li>"
-            if (userr.UserId == user.UserId) {
-                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></li>`;
-            } else {
-                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></div></li>`;
-            }
-            break;
-        }
-        default: {
-            stringHTML += "<li>"
-            if (userr.UserId == user.UserId) {
-                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
-            } else {
-                stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
-            }
-            break;
-        }
-    }
-    stringHTML += "</ul>"
-    $(chatbox[0]).append(stringHTML);
+//----GLOBAL VARIABLE----
+var HEIGHT_NAVIGATION = 52;
+var HEIGHT_MESSAGE_INPUT = 59;
+////----GLOBAL VARIABLE----
+
+//----NAVIGATION----
+
+////----NAVIGATION----
+
+//----CHAT SLIDER BAR----
+
+function chatSliderBarCalcHeight() {
+    var result = $(window).height() - HEIGHT_NAVIGATION;
+    $("#chat-slidebar").css("height",result);
 }
-
-
 function createChatSliderBar(list) {
     var chatSlidebar = document.getElementById("chat-slidebar");
     $("#chat-slidebar").empty();
@@ -42,33 +26,11 @@ function createChatSliderBar(list) {
         item = "";
     }
 }
+////----CHAT SLIDER BAR----
 
-function createAlertHavingCall(id, name) {
-    var str = `<p>${name} calling you.</p>  <button type="button" onclick="acceptCall()" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall()" class="btn btn-danger">Cancel</button>`;
-    var havingCall = $("<div id='having-call'></div>").html(str);
-    $('body')[0].append(havingCall);
-}
 
-function acceptCall() {
-    //TODO
-    var videoCall = $("#video-call")[0];
-    videoCall.style.display = 'block';
-    // console.log('acceptCall');//
-    var havingCall = $("#having-call")[0];
-    havingCall.style.display = 'none';
-}
+//---- MANAGE CHAT POPUP----
 
-function cancelCall() {
-    //TODO
-    var havingCall = $("#having-call");
-    havingCall.style.display = "none";
-}
-
-function sendImage(e) {
-
-}
-
-//this function can remove a array element.
 Array.remove = function (array, from, to) {
     var rest = array.slice((to || from) + 1 || array.length);
     array.length = from < 0 ? array.length + from : from;
@@ -105,10 +67,6 @@ function display_popups() {
             element.style.display = "block";
         }
     }
-    //for (var jjj = iii; jjj < popups.length; jjj++) {
-    //    var element = document.getElementById(popups[jjj]);
-    //    element.style.display = "none";
-    //}
 }
 
 function create_popup(roomId, name, userId, connectionId) {
@@ -121,8 +79,6 @@ function create_popup(roomId, name, userId, connectionId) {
             return;
         }
     }
-
-
     var popupBox = $("<div></div>")[0];
     popupBox.classList.add("popup-box");
     popupBox.classList.add("chat-popup");
@@ -168,24 +124,6 @@ function create_popup(roomId, name, userId, connectionId) {
     return popupBox;
 }
 
-function formSubmit(id) {
-    $(`#${id}`).submit();
-}
-//creates markup for a new popup. Adds the id to popups array.
-function register_popup(connectionId, name, userId) {
-    var userIds = [userId, user.UserId].sort().join(",");
-    var form = $("<form></form>").append($(`<input type='text' name='sUserIds' value='${userIds}'/>`));
-    degoiapi.room($(form).serialize(), (response) => create_popup(response, name, userId, connectionId));
-}
-
-function chatKeyPress(event, id) {
-    if (event.charCode == 13) {
-        signalr.ChatHub.invoke("sendMessage", $(event.target).val(), 0, id);
-        $(event.target).val("");
-    }
-}
-
-//calculate the total number of popups suitable and then populate the toatal_popups variable.
 function calculate_popups() {
     var width = window.innerWidth;
     if (width < 540) {
@@ -193,17 +131,23 @@ function calculate_popups() {
     }
     else {
         width = width - 200;
-        //320 is width of a single popup box
         total_popups = parseInt(width / 320);
     }
-
     display_popups();
-
 }
 
-//recalculate when window is loaded and also when window is resized.
+//creates markup for a new popup. Adds the id to popups array.
+function register_popup(connectionId, name, userId) {
+    var userIds = [userId, user.UserId].sort().join(",");
+    var form = $("<form></form>").append($(`<input type='text' name='sUserIds' value='${userIds}'/>`));
+    degoiapi.room($(form).serialize(), (response) => create_popup(response, name, userId, connectionId));
+}
 
-function callPeople(roomId,id) {
+////---- MANAGE CHAT POPUP----
+
+//---- VIDEO CALL INIT ----
+
+function callPeople(roomId, id) {
     if (signalr.ConnectionManager.connections[id] != null) return;
 
     $(`#${roomId}`).addClass("open-videocall");
@@ -214,8 +158,7 @@ function callPeople(roomId,id) {
         $(`#${roomId}`).removeClass("open-videocall");
     }, 500);
 
-    var HEIGHT_NAVIGATION = 52;
-    var HEIGHT_MESSAGE_INPUT = 59;
+    
     var videoChatboxHeight = $(window).height() - HEIGHT_MESSAGE_INPUT - HEIGHT_NAVIGATION;
     $("#video-chatbox-message").css("height", videoChatboxHeight);
 
@@ -225,6 +168,44 @@ function callPeople(roomId,id) {
     signalr.GetMedia();
     signalr.ChatHub.invoke("callUser", id);
 }
+
+function createAlertHavingCall(id, name) {
+    var str = `<p>${name} calling you.</p>  <button type="button" onclick="acceptCall()" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall()" class="btn btn-danger">Cancel</button>`;
+    var havingCall = $("<div id='having-call'></div>").html(str);
+    $('body')[0].append(havingCall);
+}
+
+function acceptCall() {
+    //TODO
+    var videoCall = $("#video-call")[0];
+    videoCall.style.display = 'block';
+    // console.log('acceptCall');//
+    var havingCall = $("#having-call")[0];
+    havingCall.style.display = 'none';
+}
+
+function cancelCall() {
+    //TODO
+    var havingCall = $("#having-call");
+    havingCall.style.display = "none";
+}
+
+function endCall(id) {
+    var myCam = $("#my-cam")[0];
+    var videoCall = $("#video-call")[0];
+    myCam.src = "";
+    videoCall.style.display = "none";
+    signalr.ConnectionManager.closeConnection(id);
+    signalr.ConnectionManager.mediaStream.getTracks().forEach((track) => {
+        track.stop();
+    });
+    //signalr.ConnectionManager.mediaStream = {};
+    signalr.ChatHub.invoke("hangUp");
+}
+
+////---- VIDEO CALL INIT----
+
+//---- VIDEO CALL CONTROLLER ----
 
 function exitFullScreen() {
     var videoChatbox = $("#video-chat-box")[0];
@@ -252,18 +233,6 @@ function openFullScreen() {
     btnFullScreen.style.display = "none";
 }
 
-function endCall(id) {
-    var myCam = $("#my-cam")[0];
-    var videoCall = $("#video-call")[0];
-    myCam.src = "";
-    videoCall.style.display = "none";
-    signalr.ConnectionManager.closeConnection(id);
-    signalr.ConnectionManager.mediaStream.getTracks().forEach((track) => {
-        track.stop();
-    });
-    //signalr.ConnectionManager.mediaStream = {};
-    signalr.ChatHub.invoke("hangUp");
-}
 
 function disableVideo() {
     signalr.ToggleVideo();
@@ -272,3 +241,54 @@ function disableVideo() {
 function muted() {
     signalr.ToggleSound();
 }
+////---- VIDEO CALL CONTROLLER ----
+
+
+//---- SEND MESSAGE ----
+
+function addMessage(roomId, userr, message, date, type) {
+    var item = $(`#${roomId}`)[0];
+    if (!item) item = create_popup(roomId, userr.Name, userr.UserId, userr.ConnectionId);
+    var chatbox = item.getElementsByClassName('chatbox-messages');
+    //DEMO get message from array
+    var stringHTML = "<ul>";
+    switch (type) {
+    case 2: {
+        stringHTML += "<li>"
+        if (userr.UserId == user.UserId) {
+            stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></li>`;
+        } else {
+            stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+        }
+        break;
+    }
+    default: {
+        stringHTML += "<li>"
+        if (userr.UserId == user.UserId) {
+            stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
+        } else {
+            stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
+        }
+        break;
+    }
+    }
+    stringHTML += "</ul>"
+    $(chatbox[0]).append(stringHTML);
+}
+
+
+
+function formSubmit(id) {
+    $(`#${id}`).submit();
+}
+
+
+function chatKeyPress(event, id) {
+    if (event.charCode == 13) {
+        signalr.ChatHub.invoke("sendMessage", $(event.target).val(), 0, id);
+        $(event.target).val("");
+    }
+}
+////---- SEND MESSAGE ----
+
+

@@ -159,6 +159,17 @@
         <a class="btn-addfile" href="#"></a>
     </div>
 </div>*@
+
+@* TEST scroll bar
+    <div style="width: 100px;"> AAAAAA<br/>AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
+    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br /> </div>*@
 <main>
     @RenderBody()
 </main>
@@ -173,6 +184,7 @@
         signalr.ChatHub.stop();
     }
     window.onload = () => {
+        chatSliderBarCalcHeight();
         ajax.assign();
     }
 </script>
