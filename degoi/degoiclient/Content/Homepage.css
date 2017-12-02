@@ -4,7 +4,7 @@ nav {
 /*Chat slider bar*/
 .chat-sidebar
 {
-  width: 200px;
+  width: 270px;
   position: fixed;
   height: 100%;
   right: 0px;
@@ -18,8 +18,7 @@ nav {
 
 .sidebar-name
 {
-  padding-left: 10px;
-  padding-right: 10px;
+    padding: 5px 10px 5px 10px; 
   margin-bottom: 4px;
   font-size: 12px;
 }
@@ -57,14 +56,15 @@ nav {
   position: fixed;
   bottom: 0px;
   right: 220px;
-  height: 400px;
-  background-color: rgb(237, 239, 244);
+    height: 390px;
+    background-color: white;
   width: 300px;
+    border: 1px solid gainsboro;
 }
 
 .popup-box .popup-head
 {
-  background-color: #6d84b4;
+  background-color: #4080ff;
   padding: 3px 3px 3px 10px;
   color: white;
   font-weight: bold;
@@ -74,6 +74,7 @@ nav {
 
 .popup-box .popup-head .popup-head-left
 {
+    margin-top: 3px;
   float: left;
 }
 
@@ -94,8 +95,7 @@ nav {
 {
   padding: 10px;
   height: 300px;
-  background-color: green;
-  background-color: rgb(237, 239, 244);
+  background-color: white;
   overflow-y: scroll;
 }
 
@@ -119,13 +119,10 @@ nav {
 {
   display: inline-block;
   max-width: 200px;
-  background-color: white;
+  background-color: #f1f0f0;
   padding: 5px;
   border-radius: 4px;
   position: relative;
-  border-width: 1px;
-  border-style: solid;
-  border-color: grey;
 }
 
 .chatbox-messages ul li span.left
@@ -136,7 +133,8 @@ nav {
 .chatbox-messages ul li span.right
 {
   float: right;
-  background-color: #dbedfe;
+    background-color: #4080ff;
+    color: white;
 }
 
 .clear
@@ -147,9 +145,12 @@ nav {
 .input-box
 {
   background-color: white;
-  height: 50px;
-  padding: 0px;
-  border-top: 1px solid black;
+    padding: 0px 0px 0px 5px;
+    border-top: 1px solid #e1e2e5;
+    position: fixed;
+    bottom: 0;
+    width: 298px;
+    height: 60px;
 }
 
 .input-box textarea
@@ -163,6 +164,13 @@ nav {
   font-size: 16px;
 }
 
+.input-box textarea:focus {
+    border: 0 none #FFF;
+    overflow: hidden;
+    outline:none;
+
+}
+
 .input-box button {
   height: 20px;
 }
@@ -171,12 +179,15 @@ nav {
   display: none;
 }
 
+.search-group input {
+    width: 400px !important;
+}
+
 /*Video call Container*/
 .video-call {
   display: none;
   position: fixed;
   top:52px;
-  left: 0px;
   width: 100%;
   height: 100%;
 }
@@ -195,7 +206,7 @@ nav {
   position: fixed;
   bottom: 20px;
   left:20px;
-  background-color: red;
+  background-color: black;
 }
 
 #video-chat-box {
@@ -212,6 +223,7 @@ nav {
   width: 100%;
   text-align: center;
   bottom: 20px;
+    right: 350px;
 }
 
 .video-call .minimize {
@@ -231,6 +243,16 @@ nav {
 
 #video-chat-box .chatbox-messages {
   height: 100%;
+    position: fixed;
+    overflow: auto;
+    padding-bottom: 300px;
+    width: 350px;
+    top: 55px;
+    bottom: 60px;
+}
+
+#video-chat-box .input-box {
+    width: 350px;
 }
 
 #having-call {
@@ -242,5 +264,115 @@ nav {
   top: 40%;
   left: 40%;
   /*//display: none;*/
+}
 
+
+.popup-box .btn-callvideo {
+    height: 26px;
+    width: 22px;
+    background-image: url("../imgs/icon.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -1px -214px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.popup-box .btn-closepopup {
+    height: 26px;
+    width: 22px;
+    background-image: url("../imgs/icon2.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -1px -119px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.btn-addimage {
+    height: 16px;
+    width: 16px;
+    background-image: url("../imgs/icon3.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: 0px -564px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.btn-addfile {
+    height: 16px;
+    width: 16px;
+    background-image: url("../imgs/icon3.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: 0px -530px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+
+#video-control button,#full-screen {
+    background-color: rgba(20,20,20,.6);
+    border: none;
+    cursor: pointer;
+    font-size: 0;
+    height: 44px;
+    line-height: 0;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 0;
+    transition: background-color .3s;
+    width: 64px;
+}
+
+.btn-disable-video {
+    background-image: url("../imgs/icon4.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -21px -149px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+
+.btn-muted {
+    background-image: url("../imgs/icon4.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -21px -191px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+.btn-end-call {
+    background-image: url("../imgs/icon4.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: 0 -170px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+
+.btn-exit-fullscreen {
+    background-image: url("../imgs/icon4.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -42px -170px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+
+.btn-fullscreen {
+    background-image: url("../imgs/icon4.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -21px -170px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
 }

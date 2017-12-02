@@ -85,7 +85,7 @@ function close_popup(id) {
 
 //displays the popups. Displays based on the maximum number of popups that can be displayed on the current viewport width
 function display_popups() {
-    var right = 220;
+    var right = 290;
     var iii = 0;
     for (iii; iii < popups.length; iii++) {
         if (popups[iii] != undefined) {
@@ -117,8 +117,31 @@ function create_popup(roomId, name, userId, connectionId) {
     popupBox.classList.add("popup-box");
     popupBox.classList.add("chat-popup");
     popupBox.id = roomId;
-    popupBox.innerHTML = '<div class="popup-head"><div class="popup-head-left">' + name + '</div><div class="popup-head-right"><button type="button" onclick="callPeople(\'' + connectionId + '\')" name="button">Call</button><a href="javascript:close_popup(\'' + roomId + '\');">&#10005;</a></div><div style="clear: both"></div></div><div class="chatbox-messages"></div><div class="input-box"><textarea placeholder="Enter message" onkeypress="chatKeyPress(event, \'' + roomId + '\')"></textarea></div>	';
+    //popupBox.innerHTML = '<div class="popup-head"><div class="popup-head-left">' + name +
+    //    '</div><div class="popup-head-right"><button type="button" onclick="callPeople(\'' + connectionId +
+    //    '\')" name="button">Call</button><a href="javascript:close_popup(\'' + roomId +
+    //    '\');">&#10005;</a></div><div style="clear: both"></div></div><div class="chatbox-messages">' +
+    //    '</div><div class="input-box"><textarea placeholder="Enter message" onkeypress="chatKeyPress(event, \'' + roomId +
+    //    '\')"></textarea></div>	';
 
+    popupBox.innerHTML = '<div class="popup-head">' +
+        '<div class="popup-head-left" >' + name +
+        '</div>' +
+        '<div class="popup-head-right">' +
+        '<a class="btn-callvideo" onclick="callPeople(\'' + connectionId + '\')" href="#"></a>' +
+        '<a class="btn-closepopup" href="javascript:close_popup(\'' + roomId + '\');"></a>' +
+        '</div>' +
+        '<div style="clear: both">' +
+        '</div>' +
+        '</div> ' +
+        '<div class="chatbox-messages"> ' +
+        '</div>' +
+        '<div class="input-box">' +
+        '<textarea placeholder="Enter message" onkeypress="chatKeyPress(event, \'' + roomId +
+        '\')"></textarea>' +
+        '<a class="btn-addimage" href="#"></a> &nbsp' +
+        '<a class="btn-addfile" href="#"></a>' +
+        '</div>';
     // <div class="popup-box chat-popup" id="">
     //   <div class="popup-head">
     //     <div class="popup-head-left">Name of user</div>

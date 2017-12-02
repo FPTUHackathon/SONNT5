@@ -32,16 +32,18 @@
 <!--Header-->
 
 <nav class="navbar navbar-default">
-    <div class="container-fluid">
+    <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Logo</a>
+            <a class="navbar-brand" href="#">
+                <img src="~/imgs/logo.png" alt="Alternate Text" height="22"/>
+            </a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav"></ul>
             <form class="navbar-form navbar-left">
-                <div class="form-group">
+                <div class="form-group search-group">
                     <input type="text" class="form-control" placeholder="Search">
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
@@ -50,7 +52,8 @@
 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Message<span class="badge">5</span>  <span class="caret"></span>
+                        <i class="glyphicon glyphicon-comment"></i>
+                        <span class="badge">5</span>  <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li>
@@ -84,28 +87,6 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div id="chat-slidebar" class="chat-sidebar">
-    <div class="sidebar-name">
-        <!-- Pass username and display name to register popup -->
-        <a href="javascript:register_popup('1', 'Name Of User 1');">
-            <img width="30" height="30" src="" />
-            <span>Name Of User 1</span>
-            <span style="text-align: right; background: rgb(66, 183, 42); border-radius: 50%; display: inline-block; height: 6px; margin-left: 4px; width: 6px;"></span>
-        </a>
-    </div>
-    <div class="sidebar-name">
-        <!-- Pass username and display name to register popup -->
-        <a href="javascript:register_popup('userId02', 'Name Of User 2');">
-            <img width="30" height="30" src="" />
-            <span>Name Of User 2</span>
-        </a>
-    </div>
-    <div class="sidebar-name">
-        <!-- Pass username and display name to register popup -->
-        <a href="javascript:register_popup('userId03', 'Name Of User 3');">
-            <img width="30" height="30" src="" />
-            <span>Name Of User 3</span>
-        </a>
-    </div>
 </div>
 <div id="video-call" class="video-call">
     <video id="friend-cam" class="friend-cam" style="background-color:green;" autoplay></video>
@@ -139,18 +120,44 @@
                 </li>
             </ul>
         </div>
-
+        <div class="input-box">
+            <textarea placeholder="Enter message"></textarea>
+            <a class="btn-addimage" href="#"></a> &nbsp
+            <a class="btn-addfile" href="#"></a>
+        </div>
     </div>
 
     <div id="video-control" class="video-control">
-        <button type="button" onclick="disableVideo()" name="button" id="disableVideoBtn">Disable video</button>
-        <button type="button" onclick="muted" name="button" id="mutedBtn">Muted</button>
-        <button type="button" name="button" id="endCallBtn">End call</button>
-        <button type="button" onclick="exitFullScreen()" name="button" id="exitFullScreenBtn">Exit Full Screen</button>
+        <button type="button" onclick="disableVideo()" id="disableVideoBtn"><i class="btn-disable-video"></i></button>
+        <button type="button" onclick="muted" id="mutedBtn"><i class="btn-muted"></i></button>
+        <button type="button" id="endCallBtn"><i class="btn-end-call"></i></button>
+        <button type="button" onclick="exitFullScreen()" id="exitFullScreenBtn"><i class="btn-exit-fullscreen"></i></button>
     </div>
-    <button type="button" id="full-screen" onclick="openFullScreen()" name="button">Full Screen</button>
+    <button type="button" id="full-screen" onclick="openFullScreen()" name="button"><i class="btn-fullscreen"></i></button>
 </div>
 
+
+@*<div class="popup-box chat-popup" id="e54d1506-00b0-4a06-84ef-031f52764a14" style="right: 220px; display: block;">
+        <div class="popup-head" onclick="console.log('anhnttse04296@fpt.edu.vn');">
+            <div class="popup-head-left" >
+                anhnttse04296@fpt.edu.vn
+            </div>
+            <div class="popup-head-right">
+                <a class="btn-callvideo" onclick="callPeople('e54d1506-00b0-4a06-84ef-031f52764a14')" href="#"></a>
+                <a class="btn-closepopup" href="javascript:close_popup('e54d1506-00b0-4a06-84ef-031f52764a14');"></a>
+            </div>
+            <div style="clear: both">
+            </div>
+        </div>
+        <div class="chatbox-messages">
+        </div>
+        <div class="input-box">
+            <textarea placeholder="Enter message"></textarea>
+
+            <a class="btn-addimage" href="#"></a>
+            <a class="btn-addfile" href="#"></a>
+        </div>
+    </div>*@
 <main>
     @RenderBody()
 </main>
