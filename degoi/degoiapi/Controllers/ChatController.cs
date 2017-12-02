@@ -39,24 +39,22 @@ namespace degoiapi.Controllers {
         public IHttpActionResult Upload() {
             var httpRequest = HttpContext.Current.Request;
             var roomId = httpRequest.Form["roomId"];
-            if (httpRequest.Files.Count < 1) {
-                return Json(new {
-                    error = "file not found",
-                });
-            }
+            if (httpRequest.Files.Count < 1) return BadRequest();
             foreach (string file in httpRequest.Files) {
                 var postedFile = httpRequest.Files[file];
                 var filePath = HttpContext.Current.Server.MapPath("~/Upload/") + postedFile.FileName;
                 postedFile.SaveAs(filePath);
                 //
                 var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                var user = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == User.Identity.GetUserId());
                 var userIds = ChatHub.Rooms.SingleOrDefault(r => r.RoomId == roomId).UserIds; // db
                                                                                               // db
-                foreach (var userId in userIds) hubContext.Clients.Client(userId).ReceiveMessage("~/Upload/" + postedFile.FileName, 2, roomId);
+                foreach (var userId in userIds) {
+                    var to = ChatHub.OnlineUsers.SingleOrDefault(e => e.UserId == userId);
+                    if (to != null) hubContext.Clients.Client(to.ConnectionId).ReceiveMessage(user, $"{HttpRuntime.AppDomainAppVirtualPath}/Upload/{postedFile.FileName}", DateTime.Now, 2, roomId);
+                }
             }
-            return Json(new {
-                messake = "ok",
-            });
+            return Ok();
         }
     }
 }

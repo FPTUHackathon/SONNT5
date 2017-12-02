@@ -4,12 +4,27 @@ function addMessage(roomId, userr, message, date, type) {
     var chatbox = item.getElementsByClassName('chatbox-messages');
     //DEMO get message from array
     var stringHTML = "<ul>";
-    stringHTML += "<li>"
-    if (userr.UserId == user.UserId) {
-        stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
-    } else {
-        stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
+        switch (type) {
+        case 2: {
+            stringHTML += "<li>"
+            if (userr.UserId == user.UserId) {
+                stringHTML += `<span class="left">${message}</span><img src="${message}" class="clear"></img></li>`;
+            } else {
+                stringHTML += `<span class="right">${message}</span><img src="${message}" class="clear"></img></div></li>`;
+            }
+            break;
+        }
+        default: {
+            stringHTML += "<li>"
+            if (userr.UserId == user.UserId) {
+                stringHTML += `<span class="left">${message}</span><div class="clear"></div></li>`;
+            } else {
+                stringHTML += `<span class="right">${message}</span><div class="clear"></div></li>`;
+            }
+            break;
+        }
     }
+    stringHTML += "</ul>"
     $(chatbox[0]).append(stringHTML);
 }
 
@@ -133,11 +148,29 @@ function create_popup(roomId, name, userId, connectionId) {
         '</div>';
 
     $("body")[0].append(popupBox);
+    $(`#image${roomId}`).on('submit', (event) => {
+        event.preventDefault();
+        var fm = new FormData($(`#image${roomId}`)[0]);
+        console.log(fm);
+        $.ajax({
+            url: 'https://localhost/degoiapi/api/Chat/Upload',
+            type: 'post',
+            data: fm,
+            async: false,
+            contentType: false,
+            processData: false,
+            success: (e) => console.log(e)
+        });
+        return false;
+    })
     popups.unshift(roomId);
     calculate_popups();
     return popupBox;
 }
 
+function formSubmit(id) {
+    $(`#${id}`).submit();
+}
 //creates markup for a new popup. Adds the id to popups array.
 function register_popup(connectionId, name, userId) {
     var userIds = [userId, user.UserId].sort().join(",");

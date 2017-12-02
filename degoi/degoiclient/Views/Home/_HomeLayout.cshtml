@@ -169,8 +169,8 @@
             (response) => window.location.replace("@Url.Action("Login", "Account")")
         );
     }
-    window.onunload = () => {
-        signalr.chatHub.stop();
+    window.onbeforeunload = () => {
+        signalr.ChatHub.stop();
     }
     window.onload = () => {
         ajax.assign();
