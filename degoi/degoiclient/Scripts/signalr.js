@@ -119,6 +119,7 @@
     //-----------------------HUBS----------------------
     $.support.cors = true;
     var connection = $.hubConnection(Config.Api);
+    connection.qs = { 'access_token': localStorage.getItem("token") };
     var ChatHub = connection.createHubProxy("ChatHub");
     //-----------------CHAT HUB------------------------
     ChatHub.on("duplicate", () => {

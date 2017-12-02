@@ -8,7 +8,7 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script>
         degoiapi.userInfo(
-            (response) =>window.location.replace("@Url.Action("Index", "Home")")
+            (response) => { if (localStorage.getItem("token")) window.location.replace("@Url.Action("Index", "Home")") }
         );
     </script>
     @RenderSection("head", false)
