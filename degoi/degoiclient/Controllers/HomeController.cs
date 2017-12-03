@@ -32,7 +32,7 @@ namespace degoiclient.Controllers {
         public ActionResult ChangeInfo() {
             return View();
         }
-        public async System.Threading.Tasks.Task<ActionResult> Posts()
+        public async System.Threading.Tasks.Task<ActionResult> Posts(string word)
         {
             /*WebRequestHandler handler = new WebRequestHandler();
             X509Certificate2 certificate = GetMyX509Certificate();
@@ -43,7 +43,7 @@ namespace degoiclient.Controllers {
             client.BaseAddress = new Uri("https://localhost/");
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Request.Cookies["token"].Value}");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var responseString = await client.GetStringAsync("degoiapi/api/Post/Get?tagID="+1001);
+            var responseString = await client.GetStringAsync("degoiapi/api/Post/Get?titleWord="+word);
             var ac = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(responseString);
             return View(ac);
         }

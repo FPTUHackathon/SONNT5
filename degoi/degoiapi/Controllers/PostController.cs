@@ -13,7 +13,15 @@ namespace degoiapi.Controllers
     [Authorize]
     [RoutePrefix("api/Post")]
     public class PostController : ApiController    {
-
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        public List<Post> Get(string titleWord)
+        {
+            //TODO: Trả ra toàn bộ các Question&Answer theo tag
+            if (titleWord == null)
+                titleWord = "";            
+            List<Post> posts = new PostContext().getAllPostByTitle(titleWord);
+            return posts;
+        }
 
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         public List<Post> Get(int tagID)

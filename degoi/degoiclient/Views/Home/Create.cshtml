@@ -25,7 +25,7 @@
     });
     $(function () {
         $("#testInput").autofill({
-            data: ["1001", "1002", "1003"]
+            data: ["English", "Japanese", "Grammar","Vocabulary"]            
         });
     });
 </script>
@@ -34,13 +34,13 @@
 <br>
 <div class="well">
     <b>Tags:</b>
-    <div class="col-sm-12"><input type="text" id="testInput" class="form-control form-control-inline" value="1000,1001,1002" /></div>
+    <div class="col-sm-12"><input type="text" id="testInput" class="form-control form-control-inline" value="English,Grammar,Vocabulary" /></div>
     <div class="form-group form-group-lg">
-        <b>Title:</b>
+        <div><b>Title:</b></div>        
         <div class="col-sm-12">
-            <input type="text" class="form-control form-control-inline" id="title" value="post title"></input>
+            <input type="text" class="form-control form-control-inline" id="title" value=""></input>
         </div>
-        <b>Content:</b>
+        <div><b>Content:</b></div>        
         <div class="col-sm-12">
             <textarea class="form-control form-control-inline" rows="5" id="content" value="post content"></textarea>
         </div>
@@ -52,7 +52,11 @@
             var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
             var content = $("#content").val();
             var title = $("#title").val();
-            var tags = $("#testInput").val();
+            var txttags = $("#testInput").val();
+            var tags = txttags.replace("English", "1000");
+            var tags = tags.replace("Japanese", "1001");
+            var tags = tags.replace("Grammar", "1002");
+            var tags = tags.replace("Vocabulary", "1003");
             $.ajax({
                 method: "GET",
                 url: "/degoiapi/api/Post/Get?UserID=" + userID + "&title=" + title + "&content=" + content + "&tags=" + tags,
