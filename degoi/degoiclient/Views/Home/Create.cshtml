@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+}
+
+<script type="text/javascript" src="~/Scripts/tag.js"></script>
+<script type="text/javascript" src="~/Scripts/autofill.js"></script>
+<link href="~/Content/tag.css" rel="stylesheet" type="text/css" />
+
+<style>
+    .form-control-inline {
+        min-width: 0;
+        max-width: 1000px;
+        width: 100%;
+        display: inline;
+    }
+</style>
+<script>
+    $(function () {
+        $("#testInput").tags({
+            unique: true,
+            maxTags: 5
+        });
+    });
+    $(function () {
+        $("#testInput").autofill({
+            data: ["1001", "1002", "1003"]
+        });
+    });
+</script>
+
+<h2>Create your post here </h2>
+<br>
+<div class="well">
+    <b>Tags:</b>
+    <div class="col-sm-12"><input type="text" id="testInput" class="form-control form-control-inline" value="1000,1001,1002" /></div>
+    <div class="form-group form-group-lg">
+        <b>Title:</b>
+        <div class="col-sm-12">
+            <input type="text" class="form-control form-control-inline" id="title" value="post title"></input>
+        </div>
+        <b>Content:</b>
+        <div class="col-sm-12">
+            <textarea class="form-control form-control-inline" rows="5" id="content" value="post content"></textarea>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="sendNewComment();"><i class="fa fa-reply"></i> Submit</button>
+    <script>
+        function sendNewComment() {
+            //Lay userID!!!!!!!!!!!!\
+            var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+            var content = $("#content").val();
+            var title = $("#title").val();
+            var tags = $("#testInput").val();
+            $.ajax({
+                method: "GET",
+                url: "/degoiapi/api/Post/Get?UserID=" + userID + "&title=" + title + "&content=" + content + "&tags=" + tags,
+            }).done(function (res) {
+                console.log('res', res);
+                window.location.replace("/degoiclient/Home/Posts");
+            });
+        }
+    </script>
+
+</div>
+
+
+

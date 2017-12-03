@@ -24,6 +24,7 @@
             data,
             (response) => {
                 localStorage.setItem("token", response.access_token);
+                document.cookie = `token=${response.access_token} ; expires=${new Date(new Date().getTime() + (365 * 24 * 60 * 60 * 1000)).toUTCString()} ; path=/`;
                 if (done) done(response);
             },
             fail

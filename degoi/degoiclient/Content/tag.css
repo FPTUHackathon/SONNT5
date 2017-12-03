@@ -1,0 +1,66 @@
+﻿.tags-wrapper {
+	background:white;
+	overflow:hidden;
+	width:500px;
+}
+.tags-wrapper ul {
+	margin:0px;
+	padding-left:0px;
+	padding-right:0px;
+}
+.tags-wrapper li {
+	float:left;
+	height:25px;
+	margin-left : 3px;
+	margin-left : 4px;
+    font-size : 18px;
+}
+.tags-wrapper li.tag {
+	display: inline;
+	padding: .2em .6em .3em;
+	font-size: 90%;
+    vertical-align: central;
+	font-weight: bold;
+	line-height: 1;
+	color: #ffffff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+	background-color: #428bca;
+}
+.tags-wrapper li a {
+	text-decoration:none;
+	color:white;
+	padding:2px;
+	display:inline-block;
+	margin-left:6px;
+	color: rgb(51, 51, 51);
+}
+.tags-wrapper li a:hover {
+	color:#222;
+}
+.tags-wrapper input {
+	display:none;
+}
+.tags-wrapper li.tags-input {
+	white-space: nowrap;
+	margin: 0;
+	padding: 0;
+}
+.tags-wrapper li input {
+	display: inline;
+	padding: .2em .6em .3em;
+	font-size: 75%;
+	font-weight: bold;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+	background-color: #ffffff;
+}
+.tags-wrapper .autofill-bg {
+	position:relative;
+	top:6px;
+}

@@ -1,0 +1,62 @@
+﻿@model List<degoiclient.Models.QAModels.Post>
+@{
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+    ViewBag.Title = "Posts";
+}
+
+<script>
+    function addQA(id, tille, content, author, crt_date) {
+        var userID= "user1";//lay user
+        var newDiv = "<div>" +
+                        "<div class='col-md-8' id='" + id + "'>" +
+                            "<a href='/degoiclient/Home/Post?Post_id=" + id + "'>" + tille + ". By: " + author + "</a>" +
+                            "<p>" + content + "</p>" +
+                        "<div class='row'>" +
+                        "<span class='badge'>Posted " + crt_date + "</span>" +
+                        "<div class='pull-right' id ='tag_div_of_" + id + "'></div>" +
+                    "</div><hr>";
+        $("#container").append(newDiv);
+    }
+    function addTags(post_id, tag_content,type_label) {
+        var label = "";
+        if (type_label % 4 == 0)
+            label = "label-warning"
+        if (type_label % 4 == 1)
+            label = "label-primary"
+        if (type_label % 4 == 2)
+            label = "label-success"
+        if (type_label % 4 == 3)
+            label = "label-default"
+        var tag_id = "#tag_div_of_"+post_id;
+        var content = "<span class='label " + label + "'>" + tag_content + "</span>";
+        $(tag_id).append(content);
+    }
+</script>
+
+
+    <div class="row">
+        <div class="col-sm-5"><h2>List of QA:</h2></div>
+        <div class="col-sm-7"><h2><a href="/degoiclient/Home/Create">Create</a></h2></div>      
+     </div>
+
+<br />
+<hr />
+
+<div class="container" id="container">
+</div>
+
+@foreach (degoiclient.Models.QAModels.Post question_answer in Model)
+{
+    <script>
+        addQA('@question_answer.id', '@question_answer.title', '@question_answer.content', '@question_answer.author', '@question_answer.crt_date');
+    </script>
+    for (int i = 0; i < question_answer.tags.Count; i++)
+    {
+        <script>
+            addTags('@question_answer.id', '@question_answer.tags[i].content', '@i');
+        </script>
+    }
+}
+
+
+
