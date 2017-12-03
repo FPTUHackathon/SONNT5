@@ -184,5 +184,61 @@
             processData: false,
             success: (e) => console.log(e)
         });
+    },
+    MessageRoomSearch: (data, done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Chat/MessageRoomSearch",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            (response) => {
+                if (done) done(response);
+            },
+            fail
+        );
+    },
+    MessageRoomSearchMid: (data, done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Chat/MessageRoomSearchMid",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            (response) => {
+                if (done) done(response);
+            },
+            fail
+        );
+    },
+    MessageRoomSearchUp: (data, done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Chat/MessageRoomSearchUp",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            (response) => {
+                if (done) done(response);
+            },
+            fail
+        );
+    },
+    MessageRoomSearchDown: (data, done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Chat/MessageRoomSearchDown",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            (response) => {
+                if (done) done(response);
+            },
+            fail
+        );
     }
 };

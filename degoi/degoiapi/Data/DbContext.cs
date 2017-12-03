@@ -121,6 +121,105 @@ namespace degoiapi.Data {
             return list;
         }
 
+        public static List<dynamic> MessageRoomSearch(string UserId, string RoomId, string Text)
+        {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_MESSAGE_ROOM_SEARCH$GET @UserId, @RoomId, @Text", connection);
+            command.Parameters.AddWithValue("@UserId", UserId);
+            command.Parameters.AddWithValue("@RoomId", RoomId);
+            command.Parameters.AddWithValue("@Text", Text);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new
+            {
+                MessageId = reader[0].ToString(),
+                Row = Convert.ToInt32(reader[1]),
+                Total = Convert.ToInt32(reader[2]),
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static List<dynamic> MessageRoomSearchUp(string UserId, string RoomId, string MessId)
+        {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_MESSAGE_GET_UP$GET @UserId, @RoomId, @MessId", connection);
+            command.Parameters.AddWithValue("@UserId", UserId);
+            command.Parameters.AddWithValue("@RoomId", RoomId);
+            command.Parameters.AddWithValue("@MessId", MessId);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new
+            {
+                MessageId = reader[0].ToString(),
+                RoomName = reader[1].ToString(),
+                RoomId = reader[2].ToString(),
+                Id = reader[3].ToString(),
+                FullName = reader[4].ToString(),
+                MessContent = reader[5].ToString(),
+                Status = Convert.ToInt32(reader[6]),
+                CreatedTime = Convert.ToDateTime(reader[7]),
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static List<dynamic> MessageRoomSearchDown(string UserId, string RoomId, string MessId)
+        {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_MESSAGE_GET_DOWN$GET @UserId, @RoomId, @MessId", connection);
+            command.Parameters.AddWithValue("@UserId", UserId);
+            command.Parameters.AddWithValue("@RoomId", RoomId);
+            command.Parameters.AddWithValue("@MessId", MessId);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new
+            {
+                MessageId = reader[0].ToString(),
+                RoomName = reader[1].ToString(),
+                RoomId = reader[2].ToString(),
+                Id = reader[3].ToString(),
+                FullName = reader[4].ToString(),
+                MessContent = reader[5].ToString(),
+                Status = Convert.ToInt32(reader[6]),
+                CreatedTime = Convert.ToDateTime(reader[7]),
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static List<dynamic> MessageRoomSearchMid(string UserId, string RoomId, string MessId)
+        {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_MESSAGE_GET_MID$GET @UserId, @RoomId, @MessId", connection);
+            command.Parameters.AddWithValue("@UserId", UserId);
+            command.Parameters.AddWithValue("@RoomId", RoomId);
+            command.Parameters.AddWithValue("@MessId", MessId);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new
+            {
+                MessageId = reader[0].ToString(),
+                RoomName = reader[1].ToString(),
+                RoomId = reader[2].ToString(),
+                Id = reader[3].ToString(),
+                FullName = reader[4].ToString(),
+                MessContent = reader[5].ToString(),
+                Status = Convert.ToInt32(reader[6]),
+                CreatedTime = Convert.ToDateTime(reader[7]),
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
         public static List<dynamic> GetUsers() {
             SqlConnection connection = GetConnection();
             connection.Open();

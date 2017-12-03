@@ -447,3 +447,50 @@ nav {
    
 }
 /*--------SEARCH FROM--------*/
+
+
+/*---- EXTEND MESSAGE BOX CONTROL----*/
+#extend-msg-box-control {
+    position: fixed;
+    width: 50%;
+    height: 60px;
+    bottom: 0;
+    right: 0;
+    z-index: 5;
+    border-top: 1px solid #e1e2e5;
+    display: none;
+}
+
+#extend-msg-box-control input {
+    margin: 10px;
+    width: 400px;
+    float: left;
+}
+
+#extend-msg-box-control button {
+    float: left;
+    margin: 10px;
+}
+/*-------- EXTEND MESSAGE BOX CONTROL--------*/
+
+#search-message button {
+    margin-left: 10px;
+}
+
+#btn-extend-chatbox {
+    height: 22px;
+    width: 22px;
+    background-image: url("../imgs/icon5.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.popup-box-extend {
+    position: fixed;
+    z-index: 4;
+    right: 0 !important;
+    bottom: 0 !important;   
+    width: 100% !important;
+}

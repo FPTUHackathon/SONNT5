@@ -26,6 +26,54 @@ namespace degoiapi.Controllers {
             return DbContext.GetRoomById(DbContext.GetRoomByUserIds(User.Identity.GetUserId(), sUserIds, roomName));
         }
 
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Route("MessageRoomSearch")]
+        [HttpGet]
+        public List<dynamic> MessageRoomSearch()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            var UserId = httpRequest.Params["UserId"];
+            var RoomId = httpRequest.Params["RoomId"];
+            var Text = httpRequest.Params["Text"];
+            return DbContext.MessageRoomSearch(UserId, RoomId, Text);
+        }
+
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Route("MessageRoomSearchUp")]
+        [HttpGet]
+        public List<dynamic> MessageRoomSearchUp()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            var UserId = httpRequest.Params["UserId"];
+            var RoomId = httpRequest.Params["RoomId"];
+            var MessId = httpRequest.Params["MessId"];
+            return DbContext.MessageRoomSearchUp(UserId, RoomId, MessId);
+        }
+
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Route("MessageRoomSearchDown")]
+        [HttpGet]
+        public List<dynamic> MessageRoomSearchDown()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            var UserId = httpRequest.Params["UserId"];
+            var RoomId = httpRequest.Params["RoomId"];
+            var MessId = httpRequest.Params["MessId"];
+            return DbContext.MessageRoomSearchDown(UserId, RoomId, MessId);
+        }
+
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        [Route("MessageRoomSearchMid")]
+        [HttpGet]
+        public List<dynamic> MessageRoomSearchMid()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            var UserId = httpRequest.Params["UserId"];
+            var RoomId = httpRequest.Params["RoomId"];
+            var MessId = httpRequest.Params["MessId"];
+            return DbContext.MessageRoomSearchMid(UserId, RoomId, MessId);
+        }
+
         [Route("Rooms")]
         [HttpGet]
         public List<dynamic> Rooms() {

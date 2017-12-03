@@ -96,6 +96,7 @@ function create_popup(room) {
         `<div class="popup-head-left" >${name}` +
         `</div>` +
         `<div class="popup-head-right">` +
+        `<a id="btn-extend-chatbox" onclick="extendChatbox('${room.RoomId}')" href="#"></a>` +
         `<a class="btn-callvideo" onclick="callPeople(rooms['${room.RoomId}'])" href="#"></a>` +
         `<a class="btn-closepopup" href="javascript:close_popup(rooms['${room.RoomId}']);"></a>` +
         `</div>` +
