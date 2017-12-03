@@ -66,10 +66,10 @@ function display_popups() {
     var iii = 0;
     for (iii; iii < popups.length; iii++) {
         if (popups[iii] != undefined) {
+            $("#" + popups[iii]).css("display", "block");
             var element = document.getElementById(popups[iii]);
             element.style.right = right + "px";
             right = right + 320;
-            element.style.display = "block";
         }
     }
 }
