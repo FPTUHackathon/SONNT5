@@ -34,7 +34,7 @@
     </script>
 }
 
-<!--Header-->
+<!---- NAVIGATION ---->
 
 <nav class="navbar navbar-default">
     <div class="container">
@@ -54,31 +54,6 @@
                 <button type="submit" class="btn btn-default">Submit</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-
-                @*<li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <i class="glyphicon glyphicon-comment"></i>
-                        <span class="badge">5</span>  <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="#">
-                                <strong>Nguyen Dat</strong>
-                                <br>
-                                <p>Hôm nay trời đẹp ghê, đi chơi hok</p>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <strong>Thành Pk</strong>
-                                <br>
-                                <p>Alo Tuấn Anh đang làm gì đấy</p>
-                            </a>
-                        </li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">See all in Messenger</a></li>
-                    </ul>
-                </li>*@
                 <li class="dropdown">
                     <a href="#" id="username" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -91,8 +66,18 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
+<!-------- NAVIGATION -------->
+
+<!---- CHAT SLIDE BAR ---->
+
 <div id="chat-slidebar" class="chat-sidebar">
 </div>
+<div id="slidebar-search">
+    <input type="text" name="name" value="" placeholder="Search" />
+    <a id="btn-create-new-group" onclick="openCreateGroup()"></a>
+</div>
+
+<!-------- CHAT SLIDE BAR -------->
 
 <!---- VIDEO CALL SCREEN ---->
 <div id="video-call" class="video-call">
@@ -111,8 +96,8 @@
 <!-------- VIDEO CALL SCREEN -------->
 
 <input type="text" name=""/>
-@*---- CREATE GROUP CALL PANEL----*@
-<button type="button" style="margin-top: 100px" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+<!---- CREATE GROUP CALL PANEL---->
+<button type="button" id="btn-open-group-call" style="display: none;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
 <div id="create-group-call">
     <div class="modal" id="myModal" role="dialog">
         <div class="modal-dialog">
@@ -158,7 +143,7 @@
     </div>
 </div>
 
-@*------ CREATE GROUP CALL PANEL------*@
+<!-------- CREATE GROUP CALL PANEL -------->
 
 @* TEST scroll bar
     <div style="width: 100px;"> AAAAAA<br/>AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />

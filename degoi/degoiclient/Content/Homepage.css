@@ -306,7 +306,37 @@ nav {
     vertical-align: top;
 }
 
+#btn-create-new-group {
+    height: 16px;
+    width: 16px;
+    background-image: url("../imgs/icon6.png");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: -17px -442px;
+    display: inline-block;
+}
 
+
+
+#slidebar-search {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 270px;
+    border: 1px solid rgba(29, 49, 91, .3);
+}
+
+#slidebar-search input {
+    height: 26px;
+    font-size: 14px;
+    width: 240px;
+    border: 0;
+    padding-left: 3px;
+}
+
+#slidebar-search input:focus {
+    outline: none;
+}
 
 #video-control button,#full-screen {
     background-color: rgba(20,20,20,.6);

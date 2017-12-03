@@ -64,3 +64,7 @@ $(`#create-group-btn-create`).on("click",
         //TODO create Group Room chat
 
     });
+
+function openCreateGroup() {
+    $("#btn-open-group-call").click();
+}
