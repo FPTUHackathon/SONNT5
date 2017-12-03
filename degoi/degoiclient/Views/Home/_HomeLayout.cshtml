@@ -23,7 +23,8 @@
         degoiapi.userInfo(
             (response) => {
                 user = response;
-                $("#username").text(user.Email);
+                if (!user.UserDetails) window.location.replace("@Url.Action("ChangeInfo")")
+                $("#username").text(user.UserMiniDetails.FullName);
                 loadingDone();
             },
             (jqXHR, textStatus, errorThrown) => window.location.replace("@Url.Action("Login", "Account")")
@@ -40,7 +41,7 @@
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="~/">
                 <img src="~/imgs/logo.png" alt="Alternate Text" height="22"/>
             </a>
         </div>
@@ -57,7 +58,7 @@
                 <li class="dropdown">
                     <a href="#" id="username" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Account manage</a></li>
+                        <li><a href="javascript:updateInfo()">Account manage</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="javascript:logout()">Log out</a></li>
                     </ul>
@@ -96,7 +97,6 @@
 
 <!-------- VIDEO CALL SCREEN -------->
 
-<input type="text" name=""/>
 <!---- CREATE GROUP CALL PANEL---->
 <button type="button" id="btn-open-group-call" style="display: none;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
 <div id="create-group-call">
@@ -110,13 +110,13 @@
                     <h4 class="modal-title">Create Group</h4>
                 </div>
                 <div class="modal-body">
-                    <input type="text" placeholder="Name of group" class="form-control" name="name" value="" />
                     <br />
                     @*-------Search form------*@
                     <form id="search-form" action="/" method="post">
                         <table>
+                            <tr><td><input type="text" placeholder="Name of group" class="form-control" id="roomName" value="" /></td></tr>
                             <tr>
-                                <td><input type="text" name="searchquery" class="form-control" id="create-group-search-input" placeholder="Search for people to add" /> </td>
+                                <td><input type="text" name="name" class="form-control" id="create-group-search-input" placeholder="Search for people to add" /> </td>
                                 <td> <center> Selected</center></td>
                             </tr>
 
@@ -146,21 +146,14 @@
 
 <!-------- CREATE GROUP CALL PANEL -------->
 
-@* TEST scroll bar
-    <div style="width: 100px;"> AAAAAA<br/>AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />
-    AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br />AAAAAA<br /> </div>*@
 <main>
     @RenderBody()
 </main>
 
 <script>
+    function updateInfo() {
+        window.location.replace("@Url.Action("ChangeInfo")")
+    }
     function logout() {
         degoiapi.logout(
             (response) => window.location.replace("@Url.Action("Login", "Account")")

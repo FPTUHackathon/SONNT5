@@ -28,11 +28,13 @@ namespace degoiapi.Hubs {
             bool added = false;
             foreach (var user in users) {
                 added = false;
+                var userMiniDetails = DbContext.GetUserMiniDetails(user.UserId);
                 foreach (var onlUser in OnlineUsers)
                     if (user.UserId == onlUser.UserId) {
                         userStates.Add(new {
                             UserId = user.UserId,
                             Name = user.Name,
+                            Details = userMiniDetails,
                             Online = true
                         });
                         added = true;
@@ -41,6 +43,7 @@ namespace degoiapi.Hubs {
                 if (!added) userStates.Add(new {
                     UserId = user.UserId,
                     Name = user.Name,
+                    Details = userMiniDetails,
                     Online = false
                 });
             }
@@ -82,7 +85,7 @@ namespace degoiapi.Hubs {
             foreach (var userId in userIds) sUserIds += userId.UserId + ",";
             sUserIds = sUserIds.Substring(0, sUserIds.Length - 1);
             foreach (var userId in userIds) {
-                dynamic room = DbContext.GetRoomById(DbContext.GetRoomByUserIds(user.UserId, sUserIds));
+                dynamic room = DbContext.GetRoomById(DbContext.GetRoomByUserIds(user.UserId, sUserIds, ""));
                 var usr = OnlineUsers.SingleOrDefault(u => u.UserId == userId.UserId);
                 if (usr == null) continue;
                 Clients.Client(usr.ConnectionId).ReceiveMessage(user, message, msg.CreatedDate, msg.Status, room);
@@ -105,7 +108,12 @@ namespace degoiapi.Hubs {
                 Clients.Caller.callDeclined(targetUser, $"{targetUser.UserId} is already in a call.");
                 return;
             }
-            Clients.Client(targetUser.ConnectionId).incomingCall(callingUser);
+            Clients.Client(targetUser.ConnectionId).incomingCall(new {
+                UserId = callingUser.UserId,
+                Name = callingUser.Name,
+                Details = DbContext.GetUserMiniDetails(callingUser.UserId),
+                Online = true
+            });
             CallOffers.Add(new CallOffer {
                 Caller = callingUser,
                 Callee = targetUser

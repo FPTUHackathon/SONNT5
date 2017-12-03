@@ -1,0 +1,27 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="assignmentweb.Site" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>TankLV</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="~/style.css" />
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="header">
+            <img src="favicon.ico" class="gameimg" />
+            <a href="Default.aspx" class="menu">TankLV</a>
+            <a href="Download.aspx" class="menu">Download</a>
+            <a href="Score.aspx" class="menu">Score</a>
+            <a href="About.aspx" class="menu">About</a>
+        </div>
+        <div>
+            <asp:ContentPlaceHolder ID="main" runat="server"></asp:ContentPlaceHolder>
+        </div>
+        <div class="footer">Copyright &copy; ThangLVSE04854 2017</div>
+    </form>
+</body>
+</html>

@@ -22,37 +22,23 @@ namespace degoiapi.Controllers {
         public dynamic Room() {
             var httpRequest = HttpContext.Current.Request;
             var sUserIds = httpRequest.Form["sUserIds"];
-            return DbContext.GetRoomById(DbContext.GetRoomByUserIds(User.Identity.GetUserId(), sUserIds));
-            //return DbContext.GetRoom(User.Identity.GetUserId(), sUserIds);
+            var roomName = httpRequest.Form["roomName"];
+            return DbContext.GetRoomById(DbContext.GetRoomByUserIds(User.Identity.GetUserId(), sUserIds, roomName));
         }
 
-        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
-        [Route("CreateGroupSearch")]
+        [Route("Rooms")]
         [HttpGet]
-        public dynamic CreateGroupSearch(string searchquery)
-        {
+        public List<dynamic> Rooms() {
             var httpRequest = HttpContext.Current.Request;
-            var searchInput = httpRequest.Form["search-input"];
-            List<dynamic> list = new List<dynamic>();
-            list.Add(new
-            {
-                UserId = "UserId01",
-                FullName = "Nguyen Tien Tuan Anh"
-
-            });
-            list.Add(new
-            {
-                UserId = "UserId02",
-                FullName = "Nguyen Huu Tuan"
-
-            });
-            list.Add(new
-            {
-                UserId = "UserId03",
-                FullName = "Phung Khac Thanh"
-
-            });
-            return list;
+            var userId = User.Identity.GetUserId();
+            var roomIds = DbContext.GetRoomByUserId(userId);
+            List<dynamic> rooms = new List<dynamic>();
+            foreach (var roomId in roomIds) {
+                var troom = DbContext.GetRoomById(roomId);
+                if (troom.Total <= 2) continue;
+                rooms.Add(troom);
+            }
+            return rooms;
         }
 
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]

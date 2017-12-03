@@ -77,6 +77,18 @@
             fail
         );
     },
+    updateInfo: (data, done, fail) => {
+        degoiapi.callApi(
+            "POST",
+            Config.Api + "/api/Account/UpdateInfo",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            data,
+            done,
+            fail
+        );
+    },
     externalLogins: (data, done, fail) => {
         degoiapi.callApi(
             "GET",
@@ -110,24 +122,67 @@
                 Authorization: "Bearer " + localStorage.getItem("token")
             },
             data,
-            (response) => {
-                if (done) done(response);
+            done,
+            fail
+        );
+    },
+    rooms: (done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Chat/Rooms",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
             },
+            null,
+            done,
+            fail
+        );
+    },
+    languages: (done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Account/Languages",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            null,
+            done,
+            fail
+        );
+    },
+    countries: (done, fail) => {
+        degoiapi.callApi(
+            "GET",
+            Config.Api + "/api/Account/Countries",
+            {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            null,
+            done,
             fail
         );
     },
     searchUser: (data, done, fail) => {
         degoiapi.callApi(
             "GET",
-            Config.Api + "/api/User/Search",
+            Config.Api + "/api/Account/Search",
             {
                 Authorization: "Bearer " + localStorage.getItem("token")
             },
             data,
-            (response) => {
-                if (done) done(response);
-            },
+            done,
             fail
         );
+    },
+    upload: (fm) => {
+        $.ajax({
+            url: Config.Api + "/api/Chat/Upload",
+            type: 'POST',
+            data: fm,
+            async: false,
+            contentType: false,
+            processData: false,
+            success: (e) => console.log(e)
+        });
     }
 };

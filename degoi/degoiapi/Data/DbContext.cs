@@ -11,6 +11,96 @@ namespace degoiapi.Data {
             return new SqlConnection(ConfigurationManager.ConnectionStrings["db"].ConnectionString);
         }
 
+        public static List<dynamic> GetLanguages() {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT * FROM Language", connection);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new {
+                LanguageId = reader[0].ToString(),
+                LanguageName = reader[1].ToString()
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static List<dynamic> GetCountries() {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT * FROM Country", connection);
+            SqlDataReader reader = command.ExecuteReader();
+            List<dynamic> list = new List<dynamic>();
+            while (reader.Read()) list.Add(new {
+                CountryId = reader[0].ToString(),
+                CountryName = reader[1].ToString()
+            });
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static dynamic GetUserMiniDetails(string userId) {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_USER_INFO_MINI_DISPLAY$GET @userId", connection);
+            command.Parameters.AddWithValue("@userId", userId);
+            SqlDataReader reader = command.ExecuteReader();
+            dynamic result = null;
+            if (reader.Read()) result = new {
+                UserId = reader[0].ToString(),
+                FlgUpdate = Convert.ToBoolean(reader[1]),
+                FullName = reader[2].ToString(),
+                Gender = Convert.ToBoolean(reader[3]),
+                Country = reader[4].ToString(),
+            };
+            reader.Close();
+            connection.Close();
+            return result;
+        }
+
+        public static dynamic GetUserDetails(string userId) {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_USER_INFO_FULL_EDIT$GET @userId", connection);
+            command.Parameters.AddWithValue("@userId", userId);
+            SqlDataReader reader = command.ExecuteReader();
+            dynamic result = null;
+            if (reader.Read()) result = new {
+                UserId = reader[0].ToString(),
+                FlgUpdate = Convert.ToBoolean(reader[1]),
+                FirstName = reader[2].ToString(),
+                LastName = reader[3].ToString(),
+                ImagePath = reader[4].ToString(),
+                CountryId = reader[5].ToString(),
+                DOB = Convert.ToDateTime(reader[6]),
+                Gender = Convert.ToBoolean(reader[7]),
+                LanguageIds = reader[8].ToString(),
+                About = reader[9].ToString()
+            };
+            reader.Close();
+            connection.Close();
+            return result;
+        }
+
+        public static void UpdateUserInfo(string userId, string firstName, string lastName, string imagePath, bool gender, DateTime dob, string about, string countryId, string languageIds) {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_USER_INFO_FULL_EDIT$POST @userId, @firstName, @lastName, @imagePath, @gender, @dob, @about, @countryId, @languageIds", connection);
+            command.Parameters.AddWithValue("@userId", userId);
+            command.Parameters.AddWithValue("@firstName", firstName);
+            command.Parameters.AddWithValue("@lastName", lastName);
+            command.Parameters.AddWithValue("@imagePath", imagePath);
+            command.Parameters.AddWithValue("@gender", gender);
+            command.Parameters.AddWithValue("@dob", dob);
+            command.Parameters.AddWithValue("@about", about);
+            command.Parameters.AddWithValue("@countryId", countryId);
+            command.Parameters.AddWithValue("@languageIds", languageIds);
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+
         public static List<dynamic> GetUserIdsByRoomId(string roomId) {
             SqlConnection connection = GetConnection();
             connection.Open();
@@ -34,7 +124,7 @@ namespace degoiapi.Data {
         public static List<dynamic> GetUsers() {
             SqlConnection connection = GetConnection();
             connection.Open();
-            SqlCommand command = new SqlCommand("SELECT * FROM AspNetUsers", connection);
+            SqlCommand command = new SqlCommand("SELECT * FROM AspNetUsers INNER JOIN UserInfor ON UserInfor.UserId = AspNetUsers.Id", connection);
             SqlDataReader reader = command.ExecuteReader();
             List<dynamic> list = new List<dynamic>();
             while (reader.Read()) list.Add(new {
@@ -49,13 +139,14 @@ namespace degoiapi.Data {
         public static List<dynamic> SearchUserByName(string name) {
             SqlConnection connection = GetConnection();
             connection.Open();
-            SqlCommand command = new SqlCommand("SELECT TOP 5 * FROM AspNetUsers WHERE UserName LIKE @name", connection);
+            SqlCommand command = new SqlCommand("SELECT TOP 5 Id, UserName, CONCAT(ISNULL(UserInfor.FirstName,''),' ',ISNULL(UserInfor.LastName,'')) AS FullName FROM AspNetUsers INNER JOIN UserInfor ON UserInfor.UserId = AspNetUsers.Id WHERE CONCAT(ISNULL(UserInfor.FirstName,''),' ',ISNULL(UserInfor.LastName,'')) LIKE @name", connection);
             command.Parameters.AddWithValue("@name", $"%{name}%");
             SqlDataReader reader = command.ExecuteReader();
             List<dynamic> list = new List<dynamic>();
             while (reader.Read()) list.Add(new {
                 UserId = reader[0].ToString(),
-                Name = reader[1].ToString()
+                Name = reader["UserName"].ToString(),
+                FullName = reader["FullName"].ToString()
             });
             reader.Close();
             connection.Close();
@@ -113,12 +204,26 @@ namespace degoiapi.Data {
             return result;
         }
 
-        public static string GetRoomByUserIds(string userId, string userIds) {
+        public static List<string> GetRoomByUserId(string userId) {
             SqlConnection connection = GetConnection();
             connection.Open();
-            SqlCommand command = new SqlCommand("EXEC SP_ROOM$POST @userId, @userIds", connection);
+            SqlCommand command = new SqlCommand("SELECT * FROM RoomUsers WHERE UserId = @userId", connection);
+            command.Parameters.AddWithValue("@userId", userId);
+            SqlDataReader reader = command.ExecuteReader();
+            List<string> list = new List<string>();
+            while (reader.Read()) list.Add(reader[0].ToString());
+            reader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public static string GetRoomByUserIds(string userId, string userIds, string roomName) {
+            SqlConnection connection = GetConnection();
+            connection.Open();
+            SqlCommand command = new SqlCommand("EXEC SP_ROOM$POST2 @userId, @userIds, @roomName", connection);
             command.Parameters.AddWithValue("@userId", userId);
             command.Parameters.AddWithValue("@userIds", userIds);
+            command.Parameters.AddWithValue("@roomName", roomName ?? "New Room");
             SqlDataReader reader = command.ExecuteReader();
             string result = "";
             if (reader.Read()) result = reader[0].ToString();
@@ -158,10 +263,10 @@ namespace degoiapi.Data {
             while (reader.Read()) result.Add(new {
                 RoomName = reader[0].ToString(),
                 RoomId = reader[1].ToString(),
-                FullName = reader[2].ToString(),
-                UserId = reader[3].ToString(),
+                UserId = reader[2].ToString(),
+                FullName = reader[3].ToString(),
                 MessContent = reader[4].ToString(),
-                Status = Convert.ToUInt32(reader[5]),
+                Status = Convert.ToInt32(reader[5]),
                 CreatedDate = Convert.ToDateTime(reader[6])
             });
             reader.Close();
@@ -169,7 +274,7 @@ namespace degoiapi.Data {
             return result;
         }
         public static void LogVideo(string userId1, string userId2, DateTime startTime, DateTime endTime) {
-            var roomId = DbContext.GetRoomByUserIds(userId1, $"{userId1},{userId2}");
+            var roomId = DbContext.GetRoomByUserIds(userId1, $"{userId1},{userId2}", "");
             SqlConnection connection = GetConnection();
             connection.Open();
             SqlCommand command = new SqlCommand("EXEC SP_LOG_VIDEO$POST @userId1, @userId2, @roomId, @startTime, @endTime", connection);

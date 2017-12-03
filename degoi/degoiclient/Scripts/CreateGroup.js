@@ -1,28 +1,25 @@
 ﻿var createGroupSearchResult = [];
 var createGroupSelectedUser = [];
 
-$(`#create-group-search-input`).on("keypress",
+$(`#create-group-search-input`).on("input",
     () => {
-        $.ajax({
-            type: `get`,
-            url: Config.Api + "/api/Chat/CreateGroupSearch?" + $("#search-form").serialize()
-        }).done((response) => {
-          
-            createGroupSearchResult = response;
-            displaySearchResult(response);
-
-        }).fail((jqXHR, textStatus, errorThrown) => {
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
-            if (fail) fail(jqXHR, textStatus, errorThrown);
-        });
+        if ($(`#create-group-search-input`).val().trim() === "") {
+            displaySearchResult([]);
+            return;
+        }
+        degoiapi.searchUser(
+            $("#search-form").serialize(),
+            (response) => {
+                createGroupSearchResult = response;
+                displaySearchResult(response);
+            }
+        );
     });
 
 function displaySearchResult(list) {
     $("#create-group-search-result-container").empty();
     for (var i = 0; i < list.length; i++) {
-   
+        if (list[i].UserId == user.UserId) continue;
         var $a = $("<a>", { "class": "list-group-item", "href": `javascript:createGroupAddUserToSelectedUser('${list[i].UserId}')` });
         $a.html(list[i].FullName);
         $("#create-group-search-result-container").append($a);
@@ -58,11 +55,17 @@ function createGroupAddUserToSelectedUser(userID) {
     }
 }
 
-$(`#create-group-btn-create`).on("click",
-    function() {
-        console.log("create-group-btn-create");
-        //TODO create Group Room chat
-
+$(`#create-group-btn-create`).on("click", () => {
+        var arr = $("#create-group-selected-user-container .list-group-item");
+        if (arr.length < 2) return;
+        var arrr = [user.UserId];
+        for (var i = 0; i < arr.length; i++) arrr.push(arr[i].id);
+        var userIds = arrr.sort().join(",");
+        var form = $("<form></form>")
+            .append($(`<input type='text' name='sUserIds' value='${userIds}'/>`))
+            .append($(`<input type='text' name='roomName' value='${$("#roomName").val()}'/>`));
+        degoiapi.room($(form).serialize(), (response) => create_popup(response));
+        $("#create-group-selected-user-container .list-group-item").remove();
     });
 
 function openCreateGroup() {

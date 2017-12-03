@@ -27,7 +27,7 @@ function createChatSliderBar(list) {
         var item = document.createElement("div");
         if (!list[i].Online) item.style = "background-color: gray";
         item.classList.add("sidebar-name");
-        item.innerHTML = `<a href="javascript:register_popup('${list[i].Name}', '${list[i].UserId}');"> <img width="30" height="30" src="" /> <span>${list[i].Name}</span></a>`;
+        item.innerHTML = `<a href="javascript:register_popup('${list[i].Details.FullName}', '${list[i].UserId}');"> <img width="30" height="30" src="" /> <span>${list[i].Details.FullName}</span></a>`;
         chatSlidebar.appendChild(item);
         item = "";
     }
@@ -81,9 +81,19 @@ function create_popup(room) {
     popupBox.classList.add("chat-popup");
     popupBox.id = room.RoomId;
     rooms[room.RoomId] = room;
+    var name = room.Name;
+    if (room.Total <= 2) {
+        var arr = room.UserIds.split(',');
+        var userId = user.UserId == arr[0] ? arr[1] : arr[0];
+        for (var i = 0; i < listUsers.length; i++)
+            if (listUsers[i].UserId == userId) {
+                name = listUsers[i].Details.FullName;
+                break;
+            }
+    }
 
     popupBox.innerHTML = `<div class="popup-head">` +
-        `<div class="popup-head-left" >${room.Name}` +
+        `<div class="popup-head-left" >${name}` +
         `</div>` +
         `<div class="popup-head-right">` +
         `<a class="btn-callvideo" onclick="callPeople(rooms['${room.RoomId}'])" href="#"></a>` +
@@ -111,36 +121,22 @@ function create_popup(room) {
     $("body")[0].append(popupBox);
     $(`#image${room.RoomId}`).on('submit', (event) => {
         event.preventDefault();
-        var fm = new FormData($(`#image${room.RoomId}`)[0]);
-        $.ajax({
-            url: 'https://localhost/degoiapi/api/Chat/Upload',
-            type: 'post',
-            data: fm,
-            async: false,
-            contentType: false,
-            processData: false,
-            success: (e) => console.log(e)
-        });
+        var roomId = $(event.target).attr("id").split("image")[1];
+        var fm = new FormData($(`#image${roomId}`)[0]);
+        degoiapi.upload(fm);
         return false;
     });
     $(`#file${room.RoomId}`).on('submit', (event) => {
         event.preventDefault();
-        var fm = new FormData($(`#file${room.RoomId}`)[0]);
-        $.ajax({
-            url: 'https://localhost/degoiapi/api/Chat/Upload',
-            type: 'post',
-            data: fm,
-            async: false,
-            contentType: false,
-            processData: false,
-            success: (e) => console.log(e)
-        });
+        var roomId = $(event.target).attr("id").split("file")[1];
+        var fm = new FormData($(`#file${roomId}`)[0]);
+        degoiapi.upload(fm);
         return false;
     });
     lastMsgTimestamps[room.RoomId] = "";
     $(`#chatbox${room.RoomId}`).on("scroll", (event) => {
         var roomId = $(event.target).attr("id").split("chatbox")[1];
-        if ($(event.target).scrollTop() < 22) signalr.ChatHub.invoke("getMessageHistory", room.RoomId, lastMsgTimestamps[room.RoomId]);
+        if ($(event.target).scrollTop() < 22) signalr.ChatHub.invoke("getMessageHistory", roomId, lastMsgTimestamps[roomId]);
     });
     signalr.ChatHub.invoke("getMessageHistory", room.RoomId, lastMsgTimestamps[room.RoomId]);
     popups.unshift(room.RoomId);
@@ -189,7 +185,7 @@ function callPeople(room) {
 }
 
 function createAlertHavingCall(userdata) {
-    var str = `<p>${userdata.Name} calling you.</p>  <button type="button" onclick="acceptCall('${userdata.UserId}')" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall('${userdata.UserId}')" class="btn btn-danger">Cancel</button>`;
+    var str = `<p>${userdata.Details.FullName} calling you.</p>  <button type="button" onclick="acceptCall('${userdata.UserId}')" class="btn btn-primary">Accept</button> &nbsp&nbsp&nbsp  <button type="button" onclick="cancelCall('${userdata.UserId}')" class="btn btn-danger">Cancel</button>`;
     var havingCall = $("<div id='having-call'></div>").html(str);
     $('body').append(havingCall);
 }
@@ -210,7 +206,6 @@ function acceptCall(UserId) {
 }
 
 function cancelCall(UserId) {
-
     $("#having-call").remove();
     signalr.ChatHub.invoke('answerCall', false, UserId);
 }
@@ -369,7 +364,7 @@ function formSubmit(id) {
 }
 
 function chatKeyPress(event, room) {
-    if (event.charCode == 13) {
+    if (event.charCode == 13 && $(event.target).val().trim() !== "") {
         signalr.ChatHub.invoke("sendMessage", $(event.target).val(), room.RoomId);
         $(event.target).val("");
     }

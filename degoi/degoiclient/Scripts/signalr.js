@@ -168,10 +168,11 @@
         ConnectionManager.newSignal(callingUser.UserId, callingUser.ConnectionId, data);
     });
     ChatHub.on("history", (room, messages) => {
-        for (var i = 0; i < messages.length; i++) {
-            addMessageBefore(room, messages[i].UserId, messages[i].MessContent, new Date(messages[i].CreatedDate), messages[i].Status);
-            lastMsgTimestamps[room.RoomId] = messages[i].CreatedDate;
-        }
+        for (var i = 0; i < messages.length; i++)
+            if (lastMsgTimestamps[room.RoomId] === "" || new Date(lastMsgTimestamps[room.RoomId]) > new Date(messages[i].CreatedDate)) {
+                addMessageBefore(room, messages[i].UserId, messages[i].MessContent, new Date(messages[i].CreatedDate), messages[i].Status);
+                lastMsgTimestamps[room.RoomId] = messages[i].CreatedDate;
+            }
     });
 
     connection.start().done(() => {
@@ -219,7 +220,6 @@
 
     return {
         ConnectionManager: ConnectionManager,
-        ChatHub: ChatHub,
         ChatHub: ChatHub,
         ToggleVideo: ToggleVideo,
         ToggleSound: ToggleSound,

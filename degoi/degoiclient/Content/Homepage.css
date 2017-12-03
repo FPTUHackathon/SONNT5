@@ -1,8 +1,12 @@
+main {
+    padding-top: 52px;
+}
 nav {
     position: fixed !important;
     width: 100%;
     height: 56px;
     top: 0 !important;
+    z-index: 10;
 }
 /*Chat slider bar*/
 .chat-sidebar {

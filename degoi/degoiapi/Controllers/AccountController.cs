@@ -17,6 +17,7 @@ using System.Web.Http;
 using degoiapi.Models;
 using degoiapi.Providers;
 using degoiapi.Results;
+using degoiapi.Data;
 
 namespace degoiapi.Controllers {
     [Authorize]
@@ -43,17 +44,39 @@ namespace degoiapi.Controllers {
             }
         }
 
+        [Route("Search")]
+        [HttpGet]
+        public List<dynamic> Search(string name) {
+            return DbContext.SearchUserByName(name);
+        }
+
+        [Route("Languages")]
+        [HttpGet]
+        public List<dynamic> Languages() {
+            return DbContext.GetLanguages();
+        }
+
+        [Route("Countries")]
+        [HttpGet]
+        public List<dynamic> Countries() {
+            return DbContext.GetCountries();
+        }
+
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("UserInfo")]
         public object GetUserInfo() {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+            var userMiniDetails = DbContext.GetUserMiniDetails(User.Identity.GetUserId());
+            var userDetails = DbContext.GetUserDetails(User.Identity.GetUserId());
 
             return new {
                 Email = User.Identity.GetUserName(),
                 HasRegistered = externalLogin == null,
                 LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null,
-                UserId = User.Identity.GetUserId()
+                UserId = User.Identity.GetUserId(),
+                UserMiniDetails = userMiniDetails,
+                UserDetails = userDetails
             };
         }
 
@@ -95,6 +118,27 @@ namespace degoiapi.Controllers {
                 Logins = logins,
                 ExternalLoginProviders = GetExternalLogins(returnUrl, generateState)
             };
+        }
+
+
+        [Route("UpdateInfo")]
+        [HttpPost]
+        public IHttpActionResult UpdateInfo() {
+            var httpRequest = HttpContext.Current.Request;
+            var userId = User.Identity.GetUserId();
+            var firstName = httpRequest["FirstName"];
+            var lastName = httpRequest["LastName"];
+            var imagePath = "";
+            var gender = httpRequest["gender"] == "Male";
+            var dob = DateTime.Parse(httpRequest["dob"]);
+            var about = httpRequest["about"];
+            var countryId = httpRequest["country"];
+            var languageIds = "";
+            var langs = httpRequest.Params.AllKeys.Where(e => e.StartsWith("language"));
+            foreach (var lang in langs) languageIds += lang.Replace("language", "") + ",";
+            languageIds = languageIds.Substring(0, languageIds.Length - 1);
+            DbContext.UpdateUserInfo(userId, firstName, lastName, imagePath, gender, dob, about, countryId, languageIds);
+            return Ok();
         }
 
         // GET api/Account/ExternalLogin

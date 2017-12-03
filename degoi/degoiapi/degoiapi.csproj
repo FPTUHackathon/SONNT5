@@ -180,7 +180,6 @@
     <Compile Include="Controllers\LikeController.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\ReplyController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Data\DbContext.cs" />
     <Compile Include="Data\PostContext\CommentContext.cs" />
     <Compile Include="Data\PostContext\DBContext.cs" />
