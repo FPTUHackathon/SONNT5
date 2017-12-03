@@ -15,8 +15,9 @@ namespace degoiapi.Controllers
     public class InPostController : ApiController
     {
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
-        public List<Comment> Get(int Post_id, string User_id)
+        public List<Comment> Get(int Post_id,string user_id)
         {
+            string User_id = User.Identity.GetUserId();
             //TODO: Trả ra các comment và replies của comment thuộc về Question&Answer có id bằng QA_id được gửi đến 
             //Lấy comment và replie liên quan của QA có QA_id được gọi. 
             List<Comment> comments = new CommentContext().getAllCommentOfPost(User_id, Post_id);

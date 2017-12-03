@@ -20,7 +20,7 @@
         var like_button_type = "btn-default";
         if (like_status != 0)
             like_button_type = "btn-primary";
-        var like_button = "<a  id ='likeButton"+cmt_id+"' class='btn "+like_button_type+"' onclick='sendLike("+cmt_id+");'><span class='glyphicon glyphicon-hand-up'></span><span id='likecount"+cmt_id+"'>" + like_count + "</span></a>";
+        var like_button = "<div id ='likeButton"+cmt_id+"' class='btn "+like_button_type+"' onclick='sendLike("+cmt_id+");'><span class='glyphicon glyphicon-hand-up'></span><span id='likecount"+cmt_id+"'>" + like_count + "</span></div>";
         var div_reply = "<div id='reply_of_" + cmt_id + "'></div>";
         var like_status = "<input type='hidden' id='likestatusof" + cmt_id + "' value='"+like_status+"'/>";
         var reply_input_box = "" +
@@ -38,29 +38,32 @@
     }
     function sendNewComment(post_id) {
         //Lay userID!!!!!!!!!!!!
-        var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+        var userID = user.UserId;
+        var userName = user.UserMiniDetails.FullName;
         var CmtContent = $("#cmtContentCrtBox").val();
         $.get('/degoiapi/api/Comment/Get?post_id=' + post_id + '&cmtContent=' + CmtContent + '&user_id=' + userID,
             function (data) {
                 var new_comment = JSON.parse(data);
-                addComment(new_comment, userID, Date.now(), CmtContent, 0, 0);
+                addComment(new_comment, userName, Date.now(), CmtContent, 0, 0);
                 $("#cmtContentCrtBox").val("");
             });
     }
     function sendNewReply(cmt_id) {
         //Lay userID!!!!!!!!!!!!!!
-        var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+        var userID = user.UserId;
+        var userName = user.UserMiniDetails.FullName;
         var replyContent = $("#ReplyCrtBox" + cmt_id).val();
         $.get('/degoiapi/api/Reply/Post?cmt_id=' + cmt_id + '&ReplyContent=' + replyContent + '&user_id=' + userID,
             function (data) {
                 var new_reply = JSON.parse(data);
-                addReply(cmt_id, userID, Date.now(), replyContent);
+                addReply(cmt_id, userName, Date.now(), replyContent);
                 $("#ReplyCrtBox" + cmt_id).val("");
             });
     }
     function sendLike(cmt_id) {
         //Lay userID!!!!!!!!!!!!!!
-        var userID = "1459aaa0-4763-4f3e-99e2-1521e2e00bae";
+        var userID = user.UserId;
+        var userName = user.UserMiniDetails.FullName;
         var like_count = parseInt($("#likecount" + cmt_id).text());
         var like_status = parseInt($("#likestatusof" + cmt_id).val());
         console.log("status"+like_status);
@@ -127,10 +130,10 @@
             </div>
             @foreach (Comment comment in Model)
             {
-                <script> addComment('@comment.id', '@comment.author', '@comment.crt_date', '@comment.content','@comment.like_count','@(comment.likeStatusOfCurrentUser==true?1:0)');</script>
+                <script> addComment('@comment.id', '@comment.author_name', '@comment.crt_date', '@comment.content','@comment.like_count','@(comment.likeStatusOfCurrentUser==true?1:0)');</script>
                 foreach (Reply reply in comment.replies)
                 {
-                    <script> addReply('@comment.id', '@reply.author', '@reply.crt_date', '@reply.content');</script>
+                    <script> addReply('@comment.id', '@reply.authorName', '@reply.crt_date', '@reply.content');</script>
                 }
             }
 

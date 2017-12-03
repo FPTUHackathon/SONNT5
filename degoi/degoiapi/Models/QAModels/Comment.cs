@@ -11,6 +11,7 @@ namespace degoiapi.Models.QAModels
         public int QA_id { get; set; }
         public string content { get; set; }
         public string author { get; set; }
+        public string author_name { get; set; }
         public int like_count { get; set; }
         public int dislike_count { get; set; }
         public string crt_date { get; set; }

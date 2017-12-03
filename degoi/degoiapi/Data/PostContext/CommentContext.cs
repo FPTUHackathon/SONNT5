@@ -13,7 +13,7 @@ namespace degoiapi.Data.PostContext
         public List<Comment> getAllCommentOfPost(string userID, int postID)
         {
             List<Comment> comments = new List<Comment>();
-            using (SqlCommand cmd = new SqlCommand("[SP_COMMENT_LIKE_CONTENT$GET]", connection))
+            using (SqlCommand cmd = new SqlCommand("[SP_COMMENT_LIKE_CONTENT$GET2]", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value = userID;
@@ -25,16 +25,18 @@ namespace degoiapi.Data.PostContext
                 {
                     int cmtID = Convert.ToInt32(reader[0]);
                     string Author = reader[2].ToString();
-                    string Content = reader[3].ToString();
-                    string CrtTime = reader[4].ToString();
-                    int CountLike = Convert.ToInt32(reader[5]);
-                    bool LikeStatus = Convert.ToInt32(reader[6]) == 1;
+                    string AuthorName = reader[3].ToString();
+                    string Content = reader[4].ToString();
+                    string CrtTime = reader[5].ToString();
+                    int CountLike = Convert.ToInt32(reader[6]);
+                    bool LikeStatus = Convert.ToInt32(reader[7]) == 1;
                     List<Reply> Replies = new ReplyContext().getAllReplyOfComment(cmtID);
                     comments.Add(new Comment()
                     {
                         id = cmtID,
                         QA_id = postID,
                         author = Author,
+                        author_name = AuthorName,
                         content = Content,
                         crt_date = CrtTime,
                         like_count = CountLike,

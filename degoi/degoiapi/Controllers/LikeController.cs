@@ -16,6 +16,7 @@ namespace degoiapi.Controllers
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         public bool Get(string user_id, int cmt_id, int status)
         {
+            user_id = User.Identity.GetUserId();
             new CommentContext().changeLikeStatus(user_id, cmt_id, status);
             return true;
         }

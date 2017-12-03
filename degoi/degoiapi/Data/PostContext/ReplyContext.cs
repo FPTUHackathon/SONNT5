@@ -13,7 +13,7 @@ namespace degoiapi.Data.PostContext
         public List<Reply> getAllReplyOfComment(int CommentID)
         {
             List<Reply> Replys = new List<Reply>();
-            using (SqlCommand cmd = new SqlCommand("[SP_REP_BY_COMMENT$GET]", connection))
+            using (SqlCommand cmd = new SqlCommand("[SP_REP_BY_COMMENT$GET2]", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -25,13 +25,15 @@ namespace degoiapi.Data.PostContext
                 {
                     int ID = Convert.ToInt32(reader[0]);
                     string Author = reader[2].ToString();
-                    string Content = reader[3].ToString();
-                    string CrtTime = reader[4].ToString();
+                    string AuthorName = reader[3].ToString();
+                    string Content = reader[4].ToString();
+                    string CrtTime = reader[5].ToString();
                     Replys.Add(new Reply()
                     {
                         id = ID,
                         comment_id = CommentID,
                         author = Author,
+                        authorName = AuthorName,
                         content = Content,
                         crt_date = CrtTime,
                     });
