@@ -178,7 +178,7 @@
     <Content Include="Content\icomoon\fonts\icomoon.ttf" />
     <Content Include="Content\icomoon\fonts\icomoon.woff" />
     <Content Include="fonts\HelveticaLt.ttf" />
-	<Content Include="Scripts\CreateGroup.js" />
+    <Content Include="Scripts\CreateGroup.js" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\degoiapi.js" />
     <Content Include="Scripts\Homepage.js" />
@@ -193,6 +193,7 @@
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\signalr.js" />
+    <Content Include="Scripts\VideoCall.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

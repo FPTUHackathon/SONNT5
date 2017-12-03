@@ -4,6 +4,8 @@ var HEIGHT_MESSAGE_INPUT = 59;
 var listUsers = [];
 var rooms = [];
 var lastMsgTimestamps = [];
+var isCalling = false;
+var callingRoomId = -1;
 ////----GLOBAL VARIABLE----
 
 //----NAVIGATION----
@@ -159,10 +161,13 @@ function calculate_popups() {
 }
 
 //creates markup for a new popup. Adds the id to popups array.
-function register_popup(name, userId) {
+function register_popup(name, userId, callback) {
     var userIds = [userId, user.UserId].sort().join(",");
     var form = $("<form></form>").append($(`<input type='text' name='sUserIds' value='${userIds}'/>`));
-    degoiapi.room($(form).serialize(), (response) => create_popup(response));
+    degoiapi.room($(form).serialize(), (response) => {
+        create_popup(response);
+        callback(response);
+    });
 }
 
 ////---- MANAGE CHAT POPUP----
@@ -170,20 +175,15 @@ function register_popup(name, userId) {
 //---- VIDEO CALL INIT ----
 
 function callPeople(room) {
+    if (isCalling) {
+        return;
+    }
     var arr = room.UserIds.split(',');
     if (arr.length != 2) return;
     var target = user.UserId == arr[0] ? target = arr[1] : target = arr[0];
-    //$(`#${room.roomId}`).addClass("open-videocall");
-    //var boxChat = $(`#${room.roomId}`)[0];
-    setTimeout(function () {
-        $(`#${room.roomId}`).removeClass("open-videocall");
-    }, 500);
-    var HEIGHT_NAVIGATION = 52;
-    var HEIGHT_MESSAGE_INPUT = 59;
-    var videoChatboxHeight = $(window).height() - HEIGHT_MESSAGE_INPUT - HEIGHT_NAVIGATION;
-    var videoCall = $("#video-call")[0];
-    videoCall.style.display = 'block';
-    $("#video-chatbox-message").css("height", videoChatboxHeight);
+
+    showCall(room);
+    
     $("#endCallBtn")[0].onclick = () => endCall(target);
     signalr.ChatHub.invoke("callUser", target);
 }
@@ -195,44 +195,62 @@ function createAlertHavingCall(userdata) {
 }
 
 function acceptCall(UserId) {
-    $("#having-call").remove();
-    var videoCall = $("#video-call")[0];
-    videoCall.style.display = 'block';
-    signalr.GetMedia((stream) => {
-        showCall();
-        $("#endCallBtn")[0].onclick = () => endCall(UserId);
-        signalr.ChatHub.invoke('answerCall', true, UserId);
+    //var room = getRoomByUserIdInCall(UserId);
+    register_popup(null, UserId, (room) => {
+        $("#having-call").remove();
+        var videoCall = $("#video-call")[0];
+        videoCall.style.display = 'block';
+        signalr.GetMedia((stream) => {
+            showCall(room);
+            
+            $("#endCallBtn")[0].onclick = () => endCall(UserId);
+            signalr.ChatHub.invoke('answerCall', true, UserId);
+        });
     });
 }
 
 function cancelCall(UserId) {
+
     $("#having-call").remove();
     signalr.ChatHub.invoke('answerCall', false, UserId);
 }
 
-function showCall() {
-    var videoCall = $("#video-call")[0];
-    videoCall.style.display = 'block';
+function showCall(room) {
+    isCalling = true;
+    callingRoomId = room.RoomId;
+    $(`#${room.RoomId}`).addClass("open-videocall");
+    setTimeout(function () {
+        $(`#${room.RoomId}`).removeClass("open-videocall");
+        $(`#${room.RoomId}`).addClass("video-chat-box");
+        $(`#${room.RoomId} .chatbox-messages`).first().css("height", $(window).height() - HEIGHT_MESSAGE_INPUT);
+        $("#video-call").css("background-color", "black");
+        $("#video-call").css("display", "block");
+        calcSizeItemsInVideoCallScreen();
+    }, 500);
 }
 
 function hideCall() {
+    if ($(`#${callingRoomId}`).hasClass("video-chat-box")) {
+        $(`#${callingRoomId}`).removeClass("video-chat-box");
+        $(`#${callingRoomId} .chatbox-messages`).first().css("height", "300px");
+    }
+    isCalling = false;
+    callingRoomId = -1;
+
+    $(`.open-videocall`).remove();
     $("#video-call").css("display", "none");
-    var myCam = $("#my-cam")[0];
-    myCam.src = "";
-    var frCam = $("#friend-cam")[0];
-    frCam.src = "";
+    $("#my-cam")[0].src = "";
+    $("#friend-cam")[0].src = "";
 }
 
 function cancelCall(UserId) {
+    hideCall();
     $("#having-call").remove();
     signalr.ChatHub.invoke('answerCall', false, UserId);
 }
 
 function endCall(id) {
-    var myCam = $("#my-cam")[0];
-    var videoCall = $("#video-call")[0];
-    myCam.src = "";
-    videoCall.style.display = "none";
+    hideCall();
     signalr.ConnectionManager.closeConnection(id);
     signalr.ConnectionManager.mediaStream.getTracks().forEach((track) => {
         track.stop();
@@ -246,31 +264,49 @@ function endCall(id) {
 //---- VIDEO CALL CONTROLLER ----
 
 function exitFullScreen() {
-    var videoChatbox = $("#video-chat-box")[0];
-    videoChatbox.style.display = "none";
-    var myCam = $("#my-cam")[0];
-    myCam.style.display = "none";
-    var videoControl = $("#video-control")[0];
-    videoControl.style.display = "none";
-    var friendCam = $("#friend-cam")[0];
-    friendCam.classList.add('minimize');
-    var btnFullScreen = $("#full-screen")[0];
-    btnFullScreen.style.display = "block";
+    $("#video-call").css("background-color", "transparent");
+    $("#video-call").css("width", 0);
+    $("#video-call").css("height", 0);
+
+    $(`#${callingRoomId}`).removeClass("video-chat-box");
+    $(`#${callingRoomId} .chatbox-messages`).first().css("height", "300px");
+
+    var myCam = $($("#my-cam")[0]);
+    myCam.css("display", "none");
+    var videoControl = $($("#video-control")[0]);
+    videoControl.css("display", "none");
+    var friendCam = $($("#friend-cam")[0]);
+    friendCam.addClass('minimize');
+    var btnFullScreen = $($("#full-screen")[0]);
+    btnFullScreen.css("display", "block");
 }
 
 function openFullScreen() {
-    var videoChatbox = $("#video-chat-box")[0];
-    videoChatbox.style.display = "block";
-    var myCam = $("#my-cam")[0];
-    myCam.style.display = 'block';
-    var videoControl = $("#video-control")[0];
-    videoControl.style.display = "block";
-    var friendCam = $("#friend-cam")[0];
-    friendCam.classList.remove("minimize");
-    var btnFullScreen = $("#full-screen")[0];
-    btnFullScreen.style.display = "none";
-}
 
+    $(`#${callingRoomId}`).addClass("open-videocall");
+    setTimeout(function () {
+        $(`#${callingRoomId}`).removeClass("open-videocall");
+        $(`#${callingRoomId}`).addClass("video-chat-box");
+        $(`#${callingRoomId} .chatbox-messages`).first().css("height", $(window).height() - HEIGHT_MESSAGE_INPUT);
+        $("#video-call").css("background-color", "black");
+        $("#video-call").css("display", "block");
+        $("#video-call").css("width", "100%");
+        $("#video-call").css("height", "100%");
+        calcSizeItemsInVideoCallScreen();
+        var myCam = $($("#my-cam")[0]);
+    myCam.css("display", "block");
+    var videoControl = $($("#video-control")[0]);
+    videoControl.css("display", "block");
+    var friendCam = $($("#friend-cam")[0]);
+    friendCam.removeClass("minimize");
+    var btnFullScreen = $($("#full-screen")[0]);
+    btnFullScreen.css("display", "none");
+    }, 500);
+
+
+    
+
+}
 
 function disableVideo() {
     signalr.ToggleVideo();

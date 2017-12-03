@@ -1,7 +1,8 @@
 nav {
-  z-index: 1000;
     position: fixed !important;
     width: 100%;
+    height: 56px;
+    top: 0 !important;
 }
 /*Chat slider bar*/
 .chat-sidebar {
@@ -10,8 +11,8 @@ nav {
     height: 100%;
     right: 0;
     top: 0;
-    margin-top: 52px;
-    padding-top: 20px;
+    margin-top: 56px;
+    padding-top: 10px;
     padding-bottom: 10px;
     border-left: 1px solid rgba(29, 49, 91, .3);
     overflow: auto;
@@ -189,22 +190,16 @@ nav {
 .video-call {
     display: none;
     position: fixed;
-    top:52px;
     width: 100%;
     height: 100%;
-    z-index: 1000;
 }
 
 .video-call .friend-cam {
-  position: absolute;
-  bottom: 0px;
-  right: 350px;
-  width: 100%;
-  height: 100%;
+    margin: auto;
+    position: fixed;
 }
 
 .video-call .my-cam {
-  width: 10%;
   height: 10%;
   position: fixed;
   bottom: 20px;
@@ -212,29 +207,29 @@ nav {
   background-color: black;
 }
 
-#video-chat-box {
-  position: fixed;
-  width: 350px;
-  background-color: blue;
-  height: 100%;
-  top: 52px;
-  right: 0px;
+.video-chat-box {
+    position: fixed;
+    width: 350px;
+    height: 100%;
+    top: 0;
+    right: 0 !important;
 }
 
 .video-call .video-control {
   position: fixed;
-  width: 100%;
+    width: 271px;
   text-align: center;
   bottom: 20px;
     right: 350px;
 }
 
 .video-call .minimize {
-  position: fixed;
-  width: 200px;
-  height: 200px;
-  bottom: 100px;
-  left: 100px;
+    position: fixed !important;
+    height: 15% !important;
+    width: auto !important;
+    bottom: 20px !important;
+    left: 20px !important;
+    top: auto !important;
 }
 
 #full-screen {
@@ -244,13 +239,14 @@ nav {
   display: none;
 }
 
-#video-chat-box .chatbox-messages {
+.video-chat-box .chatbox-messages {
     position: fixed;
-    bottom: 59px;
+    top: 0;
+    right: 0;
     width: 350px;
 }
 
-#video-chat-box .input-box {
+.video-chat-box .input-box {
     width: 350px;
 }
 
@@ -385,11 +381,11 @@ nav {
     }
 
     to {
-        width: 300px;
+        width: 350px;
         height: 100%;
         position: fixed;
-        right: 0px;
-        bottom: 0px;    
+        right: 0;
+        bottom: 0;    
     }
 }
 
